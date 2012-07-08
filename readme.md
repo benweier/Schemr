@@ -1,5 +1,5 @@
 # About
-Schemr allows your to select your color scheme from the command palette.
+Schemr allows you to select your color scheme from the command palette.
 
 # Installation
 Install Schemr through [Package Control](http://wbond.net/sublime_packages/package_control) or download and extract it into your Packages folder.

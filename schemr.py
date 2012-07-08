@@ -30,7 +30,7 @@ class SwitchSchemeCommand(sublime_plugin.ApplicationCommand):
 			self.set_scheme(s)
 
 	def get_scheme(self):
-		return settings.get('color_scheme', 'Monokai.tmTheme')
+		return settings.get('color_scheme', 'Packages/Color Scheme - Default/Monokai.tmTheme')
 
 	def set_scheme(self, s):
 		settings.set('color_scheme', s)
