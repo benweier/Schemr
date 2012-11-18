@@ -7,14 +7,18 @@ settings = sublime.load_settings('Preferences.sublime-settings')
 
 class ScanFiles(threading.Thread):
 	def run(self):
-		for root, dirs, files in os.walk(sublime.packages_path()):
+		packages_path = sublime.packages_path()
+		for root, dirs, files in os.walk(packages_path):
 			for filename in files:
 				if filename.endswith('.tmTheme'):
-					Schemr.commands.append({'caption': 'Schemr: ' + os.path.splitext(filename)[0], 'command': 'switch_scheme', 'args': { 's': 'Packages' + '/' + os.path.split(root)[1] + '/' + filename }})
+					path = os.path.split(root)[1] + '/' + filename
+					if root != packages_path:
+						path = 'Packages' + '/' + path
+					Schemr.commands.append({'caption': 'Schemr: ' + os.path.splitext(filename)[0], 'command': 'switch_scheme', 'args': { 's': path }})
 
 		Schemr.commands.append({'caption': 'Schemr: Reload schemes', 'command': 'reload_schemes'})
 
-		c = open(os.path.join(sublime.packages_path(), 'Schemr', 'Default.sublime-commands'), 'w')
+		c = open(os.path.join(packages_path, 'Schemr', 'Default.sublime-commands'), 'w')
 		c.write(json.dumps(Schemr.commands, indent = 4) + '\n')
 		c.close
 
