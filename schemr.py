@@ -11,7 +11,7 @@ class ScanFiles(threading.Thread):
 		for root, dirs, files in os.walk(packages_path):
 			for filename in files:
 				if filename.endswith('.tmTheme'):
-					path = os.path.split(root)[1] + '/' + filename
+					path = os.path.relpath(root,packages_path) + '/' + filename
 					if root != packages_path:
 						path = 'Packages' + '/' + path
 					Schemr.commands.append({'caption': 'Schemr: ' + os.path.splitext(filename)[0], 'command': 'switch_scheme', 'args': { 's': path }})
