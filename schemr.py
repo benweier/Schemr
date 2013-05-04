@@ -1,6 +1,8 @@
 import sublime, sublime_plugin
 import os
 
+settings = sublime.load_settings('Preferences.sublime-settings')
+
 class Schemr():
 	def load_schemes(self):
 		color_schemes = []
@@ -19,7 +21,7 @@ class Schemr():
 		sublime.save_settings('Preferences.sublime-settings')
 
 	def get_scheme(self):
-		return sublime.load_settings('Preferences.sublime-settings').get('color_scheme')
+		return settings.get('color_scheme')
 
 	def cycle_scheme(self, d):
 		color_schemes = self.load_schemes()
