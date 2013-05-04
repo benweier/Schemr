@@ -1,9 +1,13 @@
 # About
-Schemr allows you to select your color scheme from the command palette.
+Schemr allows you to quickly select your color scheme from the command palette, as well as providing key bindings to easily cycle forward and backward through your color schemes.
 
 # Installation
 Install Schemr through [Package Control](http://wbond.net/sublime_packages/package_control) or download and extract it into your Packages folder.
 
 # Usage
-Type "Schemr" or the name of a color scheme into the command palette and select it.
-Use the "Schemr: Reload schemes" command after installing or removing a color scheme to update the command palette options.
+Select "Schemr: List schemes" into the command palette to bring up the available schemes. Default binding: `ctrl+alt+f5` (Windows/Linux) `super+alt+f5` (OSX)
+The "Schemr: Next scheme" `ctrl+alt+f7` (Windows/Linux) `super+alt+f7` (OSX) command will skip to the next scheme available.
+The "Schemr: Previous scheme" `ctrl+alt+f8` (Windows/Linux) `super+alt+f8` (OSX)command will skip to the previous scheme available.
+
+# Known Issues: 4 May 2013
+Sublime Text 3 support is limited to `.tmTheme` files located in your `/Packages/` directory. Schemes saved as `.sublime-package` files (such as through [Package Control](http://wbond.net/sublime_packages/package_control)) in the `/Installed Packages/` directory are not yet supported. Temporary workaround: unzip the `.sublime-package` file to a folder in the `/Packages/` directory.

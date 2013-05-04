@@ -1,49 +1,57 @@
 import sublime, sublime_plugin
 import os
-import json
-import threading
 
-settings = sublime.load_settings('Preferences.sublime-settings')
+class Schemr():
+	def load_schemes(self):
+		color_schemes = []
 
-class ScanFiles(threading.Thread):
-	def run(self):
-		packages_path = sublime.packages_path()
-		for root, dirs, files in os.walk(packages_path):
+		for root, dirs, files in os.walk(sublime.packages_path()):
 			for filename in files:
 				if filename.endswith('.tmTheme'):
-					path = os.path.relpath(root,packages_path) + '/' + filename
-					if root != packages_path:
-						path = 'Packages' + '/' + path
-					Schemr.commands.append({'caption': 'Schemr: ' + os.path.splitext(filename)[0], 'command': 'switch_scheme', 'args': { 's': path }})
+					name = os.path.basename(filename).replace('.tmTheme', '')
+					filepath = os.path.join(root, filename).replace(sublime.packages_path(), 'Packages').replace('\\', '/')
+					color_schemes.append([name, filepath])
 
-		Schemr.commands.append({'caption': 'Schemr: Reload schemes', 'command': 'reload_schemes'})
-
-		c = open(os.path.join(packages_path, 'Schemr', 'Default.sublime-commands'), 'w')
-		c.write(json.dumps(Schemr.commands, indent = 4) + '\n')
-		c.close
-
-class Schemr:
-	def load(self):
-		Schemr.scheme = settings.get('color_scheme')
-		Schemr.commands = []
-		thread = ScanFiles()
-		thread.start()
-
-Schemr = Schemr()
-sublime.set_timeout(Schemr.load, 3000)
-
-class SwitchSchemeCommand(sublime_plugin.ApplicationCommand):
-	def run(self, s):
-		if self.get_scheme() != s:
-			self.set_scheme(s)
-
-	def get_scheme(self):
-		return settings.get('color_scheme', 'Packages/Color Scheme - Default/Monokai.tmTheme')
+		return color_schemes
 
 	def set_scheme(self, s):
 		settings.set('color_scheme', s)
 		sublime.save_settings('Preferences.sublime-settings')
 
-class ReloadSchemesCommand(sublime_plugin.ApplicationCommand):
+	def get_scheme(self):
+		return sublime.load_settings('Preferences.sublime-settings').get('color_scheme')
+
+	def cycle_scheme(self, d):
+		color_schemes = self.load_schemes()
+		the_scheme = self.get_scheme()
+		the_index = [scheme[1] for scheme in color_schemes].index(the_scheme)
+		num_of_schemes = len(color_schemes)
+
+		if d == 1:
+			index = the_index + 1 if the_index < num_of_schemes - 1 else 0
+
+		if d == -1:
+			index = the_index - 1 if the_index > 0 else num_of_schemes - 1
+
+		self.set_scheme(color_schemes[index][1])
+		sublime.status_message('Schemr: ' + color_schemes[index][0])
+
+Schemr = Schemr()
+
+class SchemrListSchemesCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		Schemr.load()
+		color_schemes = Schemr.load_schemes()
+
+		def on_done(index):
+			if index != -1:
+				Schemr.set_scheme(color_schemes[index][1])
+
+		self.window.show_quick_panel(color_schemes, on_done)
+
+class SchemrNextSchemeCommand(sublime_plugin.WindowCommand):
+	def run(self):
+		Schemr.cycle_scheme(1)
+
+class SchemrPrevSchemeCommand(sublime_plugin.WindowCommand):
+	def run(self):
+		Schemr.cycle_scheme(-1)

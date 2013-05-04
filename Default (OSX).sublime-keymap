@@ -1,0 +1,5 @@
+[
+	{ "keys": ["super+alt+f5"], "command": "schemr_list_schemes" },
+	{ "keys": ["super+alt+f7"], "command": "schemr_next_scheme" },
+	{ "keys": ["super+alt+f8"], "command": "schemr_prev_scheme" }
+]
