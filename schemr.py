@@ -56,6 +56,7 @@ class SchemrListSchemesCommand(sublime_plugin.WindowCommand):
 		def on_done(index):
 			if index != -1:
 				Schemr.set_scheme(color_schemes[index][1])
+				sublime.status_message('Schemr: ' + color_schemes[index][0])
 
 		self.window.show_quick_panel(color_schemes, on_done)
 
