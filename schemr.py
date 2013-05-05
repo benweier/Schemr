@@ -6,11 +6,10 @@ class Schemr():
 		color_schemes = []
 
 		for root, dirs, files in os.walk(sublime.packages_path()):
-			for filename in files:
-				if filename.endswith('.tmTheme'):
-					name = filename.replace('.tmTheme', '')
-					filepath = os.path.join(root, filename).replace(sublime.packages_path(), 'Packages').replace('\\', '/')
-					color_schemes.append([name, filepath])
+			for filename in (filename for filename in files if filename.endswith('.tmTheme')):
+				name = filename.replace('.tmTheme', '')
+				filepath = os.path.join(root, filename).replace(sublime.packages_path(), 'Packages').replace('\\', '/')
+				color_schemes.append([name, filepath])
 
 		for root, dirs, files in os.walk(sublime.installed_packages_path()):
 			for filename in (filename for filename in files if filename.startswith('Color Scheme - ') and filename.endswith('.sublime-package')):
