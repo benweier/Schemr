@@ -19,11 +19,13 @@ class Schemr():
 					filepath = os.path.join(root, package, filename).replace(sublime.installed_packages_path(), 'Packages').replace('.sublime-package', '').replace('\\', '/')
 					color_schemes.append(['Scheme: ' + name, filepath])
 
-		zf = zipfile.ZipFile(os.path.join(os.getcwd(), 'Packages', 'Color Scheme - Default.sublime-package'))
-		for filename in (filename for filename in zf.namelist() if filename.endswith('.tmTheme')):
-			name = os.path.basename(filename).replace('.tmTheme', '')
-			filepath = os.path.join('Packages', 'Color Scheme - Default', filename).replace('\\', '/')
-			color_schemes.append(['Scheme: ' + name, filepath])
+		default_schemes = os.path.join(os.getcwd(), 'Packages', 'Color Scheme - Default.sublime-package')
+		if os.path.exists(default_schemes):
+			zf = zipfile.ZipFile(default_schemes)
+			for filename in (filename for filename in zf.namelist() if filename.endswith('.tmTheme')):
+				name = os.path.basename(filename).replace('.tmTheme', '')
+				filepath = os.path.join('Packages', 'Color Scheme - Default', filename).replace('\\', '/')
+				color_schemes.append(['Scheme: ' + name, filepath])
 
 		color_schemes.sort()
 		return color_schemes
