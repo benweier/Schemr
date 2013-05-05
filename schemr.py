@@ -9,15 +9,15 @@ class Schemr():
 			for filename in (filename for filename in files if filename.endswith('.tmTheme')):
 				name = filename.replace('.tmTheme', '')
 				filepath = os.path.join(root, filename).replace(sublime.packages_path(), 'Packages').replace('\\', '/')
-				color_schemes.append([name, filepath])
+				color_schemes.append(['Scheme: ' + name, filepath])
 
 		for root, dirs, files in os.walk(sublime.installed_packages_path()):
-			for filename in (filename for filename in files if filename.startswith('Color Scheme - ') and filename.endswith('.sublime-package')):
-				package = zipfile.ZipFile(os.path.join(sublime.installed_packages_path(), filename))
-				for f in (f for f in package.namelist() if f.endswith('.tmTheme')):
-					name = f.replace('.tmTheme', '')
-					filepath = os.path.join(root, filename, f).replace(sublime.installed_packages_path(), 'Packages').replace('.sublime-package', '').replace('\\', '/')
-					color_schemes.append([name, filepath])
+			for package in (package for package in files if package.endswith('.sublime-package')):
+				zf = zipfile.ZipFile(os.path.join(sublime.installed_packages_path(), package))
+				for filename in (filename for filename in zf.namelist() if filename.endswith('.tmTheme')):
+					name = os.path.basename(filename).replace('.tmTheme', '')
+					filepath = os.path.join(root, package, filename).replace(sublime.installed_packages_path(), 'Packages').replace('.sublime-package', '').replace('\\', '/')
+					color_schemes.append(['Scheme: ' + name, filepath])
 
 		return color_schemes
 
@@ -41,7 +41,7 @@ class Schemr():
 			index = the_index - 1 if the_index > 0 else num_of_schemes - 1
 
 		self.set_scheme(color_schemes[index][1])
-		sublime.status_message('Schemr: ' + color_schemes[index][0])
+		sublime.status_message(color_schemes[index][0])
 
 	def settings(self):
 		return sublime.load_settings('Preferences.sublime-settings')
@@ -55,7 +55,7 @@ class SchemrListSchemesCommand(sublime_plugin.WindowCommand):
 		def on_done(index):
 			if index != -1:
 				Schemr.set_scheme(color_schemes[index][1])
-				sublime.status_message('Schemr: ' + color_schemes[index][0])
+				sublime.status_message(color_schemes[index][0])
 
 		self.window.show_quick_panel(color_schemes, on_done)
 
