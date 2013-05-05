@@ -11,7 +11,5 @@ The "Schemr: Next scheme" `ctrl+alt+f7` (Windows/Linux) `super+alt+f7` (OSX) com
 
 The "Schemr: Previous scheme" `ctrl+alt+f8` (Windows/Linux) `super+alt+f8` (OSX)command will skip to the previous scheme available.
 
-# Sublime Text 3 compatibility
-ST3 support is limited to `.tmTheme` files located in your `/Packages/` directory. Schemes saved as `.sublime-package` files (such as through [Package Control](http://wbond.net/sublime_packages/package_control)) in the `/Installed Packages/` directory are not yet supported.
-
-Temporary workaround: unzip the `.sublime-package` file to a folder in the `/Packages/` directory.
+# Sublime Text version compatibility
+Schemr is fully compatible with Sublime Text 2 and 3. Standalone `tmTheme` files can be placed anywhere within the `/Packages/` folder while `.sublime-packages` files downloaded through [Package Control](http://wbond.net/sublime_packages/package_control) must start with "Color Scheme - " to be usable in Schemr.
