@@ -1,5 +1,6 @@
 import sublime, sublime_plugin
 import os, zipfile
+from random import random
 
 class Schemr():
 	def load_schemes(self):
@@ -43,11 +44,14 @@ class Schemr():
 		the_index = [scheme[1] for scheme in color_schemes].index(the_scheme)
 		num_of_schemes = len(color_schemes)
 
-		if d == 1:
+		if d == "next":
 			index = the_index + 1 if the_index < num_of_schemes - 1 else 0
 
-		if d == -1:
+		if d == "prev":
 			index = the_index - 1 if the_index > 0 else num_of_schemes - 1
+
+		if d == "rand":
+			index = int(random() * len(color_schemes))
 
 		self.set_scheme(color_schemes[index][1])
 		sublime.status_message(color_schemes[index][0])
@@ -81,8 +85,12 @@ class SchemrListSchemesCommand(sublime_plugin.WindowCommand):
 
 class SchemrNextSchemeCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		Schemr.cycle_scheme(1)
+		Schemr.cycle_scheme("next")
 
-class SchemrPrevSchemeCommand(sublime_plugin.WindowCommand):
+class SchemrPreviousSchemeCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		Schemr.cycle_scheme(-1)
+		Schemr.cycle_scheme("prev")
+
+class SchemrRandomSchemeCommand(sublime_plugin.WindowCommand):
+	def run(self):
+		Schemr.cycle_scheme("rand")
