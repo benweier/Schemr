@@ -60,13 +60,24 @@ Schemr = Schemr()
 class SchemrListSchemesCommand(sublime_plugin.WindowCommand):
 	def run(self):
 		color_schemes = Schemr.load_schemes()
+		the_scheme = Schemr.get_scheme()
+		the_index = [scheme[1] for scheme in color_schemes].index(the_scheme)
 
 		def on_done(index):
 			if index != -1:
 				Schemr.set_scheme(color_schemes[index][1])
 				sublime.status_message(color_schemes[index][0])
 
-		self.window.show_quick_panel(color_schemes, on_done)
+			if index == -1:
+				Schemr.set_scheme(color_schemes[the_index][1])
+
+		def on_select(index):
+			Schemr.set_scheme(color_schemes[index][1])
+
+		try:
+			self.window.show_quick_panel(color_schemes, on_done, 0, the_index, on_select)
+		except:
+			self.window.show_quick_panel(color_schemes, on_done)
 
 class SchemrNextSchemeCommand(sublime_plugin.WindowCommand):
 	def run(self):
