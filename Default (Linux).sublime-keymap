@@ -1,5 +1,6 @@
 [
 	{ "keys": ["ctrl+alt+f5"], "command": "schemr_list_schemes" },
 	{ "keys": ["ctrl+alt+f7"], "command": "schemr_next_scheme" },
-	{ "keys": ["ctrl+alt+f8"], "command": "schemr_prev_scheme" }
+	{ "keys": ["ctrl+alt+f8"], "command": "schemr_previous_scheme" },
+	{ "keys": ["ctrl+alt+f4"], "command": "schemr_random_scheme" }
 ]
