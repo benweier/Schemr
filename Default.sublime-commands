@@ -9,6 +9,10 @@
     },
     {
         "caption": "Schemr: Previous scheme",
-        "command": "schemr_prev_scheme"
+        "command": "schemr_previous_scheme"
+    },
+    {
+        "caption": "Schemr: Random scheme",
+        "command": "schemr_random_scheme"
     }
 ]
