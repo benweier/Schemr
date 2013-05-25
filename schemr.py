@@ -41,8 +41,11 @@ class Schemr():
 	def cycle_scheme(self, d):
 		color_schemes = self.load_schemes()
 		the_scheme = self.get_scheme()
-		the_index = [scheme[1] for scheme in color_schemes].index(the_scheme)
 		num_of_schemes = len(color_schemes)
+		try:
+			the_index = [scheme[1] for scheme in color_schemes].index(the_scheme)
+		except (ValueError):
+			the_index = 0
 
 		if d == "next":
 			index = the_index + 1 if the_index < num_of_schemes - 1 else 0
