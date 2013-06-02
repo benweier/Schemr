@@ -18,3 +18,6 @@ Skip to the next scheme with the "Schemr: Next scheme"  command.
 
 Skip to the previous scheme with the "Schemr: Next scheme"  command.
 * Default binding: `ctrl+alt+f8` (Windows/Linux) `super+alt+f8` (OSX)
+
+Select a random colour scheme from the available schemes with the "Schemr: Random scheme" command.
+* Default binding: `ctrl+alt+f4` (Windows/Linux) `super+alt+f4` (OSX)
