@@ -1,7 +1,10 @@
 # About
-Schemr allows you to quickly change your color scheme from the command palette, as well as providing key bindings to easily cycle forward and backward through your color schemes.
+Schemr allows you to quickly change your color scheme from the command palette, as well as commands to easily cycle forward, backward, and randomly through your available color schemes.
 
-Features full compatibility with Sublime Text 2 and 3. Easily preview the selected color scheme in Sublime Text 3 as you navigate through the list of schemes.
+# Features
+* Full compatibility with Sublime Text 2 and 3.
+* Previews the selected color scheme as you navigate up/down through the quick panel. [ST3 ONLY]
+* Automatically loads all available `.tmTheme` files, including those found inside `.sublime-package` files. No need to restart Sublime Text or initiate a reload!
 
 # Installation
 Install Schemr through [Package Control](http://wbond.net/sublime_packages/package_control) or download and extract it into your Packages folder.
