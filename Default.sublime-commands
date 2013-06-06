@@ -31,5 +31,13 @@
     {
         "caption": "Schemr: Random favorite scheme",
         "command": "schemr_random_favorite_scheme"
+    },
+    {
+        "caption": "Schemr: Add current scheme to favorites",
+        "command": "schemr_favorite_current_scheme"
+    },
+    {
+        "caption": "Schemr: Remove current scheme from favorites",
+        "command": "schemr_unfavorite_current_scheme"
     }
 ]
