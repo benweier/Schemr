@@ -1,6 +1,6 @@
 [
     {
-        "caption": "Schemr: List schemes",
+        "caption": "Schemr: List all schemes",
         "command": "schemr_list_schemes"
     },
     {
@@ -14,5 +14,22 @@
     {
         "caption": "Schemr: Random scheme",
         "command": "schemr_random_scheme"
+    },
+    
+    {
+        "caption": "Schemr: List favorite schemes",
+        "command": "schemr_list_favorite_schemes"
+    },
+    {
+        "caption": "Schemr: Next favorite scheme",
+        "command": "schemr_next_favorite_scheme"
+    },
+    {
+        "caption": "Schemr: Previous favorite scheme",
+        "command": "schemr_previous_favorite_scheme"
+    },
+    {
+        "caption": "Schemr: Random favorite scheme",
+        "command": "schemr_random_favorite_scheme"
     }
 ]
