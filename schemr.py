@@ -1,7 +1,6 @@
 import sublime, sublime_plugin
 import os, zipfile
 from random import random
-from time import sleep
 
 	# Contains various common, internal functions for Schemr.
 class Schemr():
@@ -47,7 +46,41 @@ class Schemr():
 			
 		all_schemes.sort()
 		return all_schemes
+	
+	def get_favorite_schemes(self):
+		return sublime.load_settings("SchemrFavorites.sublime-settings").get("schemr_favorites", [])
+	def set_favorite_schemes(self, favorite_schemes):
+		settings = sublime.load_settings("SchemrFavorites.sublime-settings")
+		settings.set("schemr_favorites", favorite_schemes)
+		sublime.save_settings("SchemrFavorites.sublime-settings")
+		
+	def list_schemes(self, window, schemes):
+		# Discard favorites information for listing schemes.
+		color_schemes = [[scheme[0], scheme[1]] for scheme in schemes]
+		
+		the_scheme = self.get_scheme()
+		print("the_scheme = " + the_scheme)
+		
+		the_index = None
+		try: the_index = [scheme[1] for scheme in color_schemes].index(the_scheme)
+		except (ValueError): the_index = 0
 
+		def on_done(index):
+			if index != -1:
+				self.set_scheme(color_schemes[index][1])
+				sublime.status_message(color_schemes[index][0])
+
+			if index == -1:
+				self.set_scheme(color_schemes[the_index][1])
+
+		def on_select(index):
+			self.set_scheme(color_schemes[index][1])
+
+		try:
+			window.show_quick_panel(color_schemes, on_done, 0, the_index, on_select)
+		except:
+			window.show_quick_panel(color_schemes, on_done)
+	
 	def set_scheme(self, s):
 		self.settings().set('color_scheme', s)
 		sublime.save_settings('Preferences.sublime-settings')
@@ -62,28 +95,31 @@ Schemr = Schemr()
 
 class SchemrListSchemesCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		# Discard favorites information for listing schemes.
-		color_schemes = [[scheme[0], scheme[1]] for scheme in Schemr.load_schemes()]
-		
-		the_scheme = Schemr.get_scheme()
-		the_index = [scheme[1] for scheme in color_schemes].index(the_scheme)
+		Schemr.list_schemes(self.window, Schemr.load_schemes())
 
-		def on_done(index):
-			if index != -1:
-				Schemr.set_scheme(color_schemes[index][1])
-				sublime.status_message(color_schemes[index][0])
+class SchemrListFavoriteSchemesCommand(sublime_plugin.WindowCommand):
+	def run(self):
+		Schemr.list_schemes(self.window, [scheme for scheme in Schemr.load_schemes() if scheme[2]])
+	def is_enabled(self):
+		return len(Schemr.get_favorite_schemes()) >= 1
 
-			if index == -1:
-				Schemr.set_scheme(color_schemes[the_index][1])
+class SchemrFavoriteCurrentSchemeCommand(sublime_plugin.WindowCommand):
+	def run(self):
+		print("Enabling.")
+		favorites = Schemr.get_favorite_schemes()
+		favorites.append(Schemr.get_scheme())
+		Schemr.set_favorite_schemes(favorites)
+	def is_enabled(self):
+		return Schemr.get_scheme() not in Schemr.get_favorite_schemes()
 
-		def on_select(index):
-			Schemr.set_scheme(color_schemes[index][1])
-
-		try:
-			self.window.show_quick_panel(color_schemes, on_done, 0, the_index, on_select)
-		except:
-			self.window.show_quick_panel(color_schemes, on_done)
-
+class SchemrUnfavoriteCurrentSchemeCommand(sublime_plugin.WindowCommand):
+	def run(self):
+		favorites = Schemr.get_favorite_schemes()
+		favorites.remove(Schemr.get_scheme())
+		Schemr.set_favorite_schemes(favorites)
+	def is_enabled(self):
+		return Schemr.get_scheme() in Schemr.get_favorite_schemes()
+	
 	# Cycles the scheme in the given direction ("next", "prev" or "rand").
 class SchemrCycleSchemesCommand(sublime_plugin.WindowCommand):
 	def run(self, direction):
@@ -106,6 +142,39 @@ class SchemrCycleSchemesCommand(sublime_plugin.WindowCommand):
 
 		Schemr.set_scheme(color_schemes[index][1])
 		sublime.status_message(color_schemes[index][0])
+		
+	# Same as SchemrCycleSchemesCommand, but skips schemes that aren't favorited.
+class SchemrCycleFavoriteSchemesCommand(sublime_plugin.WindowCommand):
+	def run(self, direction):
+		color_schemes = Schemr.load_schemes()
+		the_scheme = Schemr.get_scheme()
+		num_of_schemes = len(color_schemes)
+		
+		try:
+			the_index = [scheme[1] for scheme in color_schemes].index(the_scheme)
+		except (ValueError):
+			the_index = 0
+
+		if direction == "rand":
+			# Filter out non-favorites to select a random favorite.
+			favorite_color_schemes = [scheme for scheme in color_schemes if scheme[2]]
+			index = int(random() * len(favorite_color_schemes))
+			Schemr.set_scheme(favorite_color_schemes[index][1])
+			sublime.status_message(favorite_color_schemes[index][0])
+		else:
+			index = the_index
+			if direction == "next":
+				for iteration in range(0, num_of_schemes):
+					index = index + 1
+					if index >= num_of_schemes: index = 0;
+					if color_schemes[index][2]: break # Stop on the first favorite found.
+			elif direction == "prev":
+				for iteration in range(0, num_of_schemes):
+					index = index - 1
+					if index < 0: index = num_of_schemes - 1;
+					if color_schemes[index][2]: break # Stop on the first favorite found.
+			Schemr.set_scheme(color_schemes[index][1])
+			sublime.status_message(color_schemes[index][0])
 		
 # These commands are provided for backwards-compatibility.
 # SchemrCycleSchemeCommand should be used instead.
