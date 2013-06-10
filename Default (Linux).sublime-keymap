@@ -1,6 +1,6 @@
 [
 	{ "keys": ["ctrl+alt+f5"], "command": "schemr_list_schemes" },
-	{ "keys": ["ctrl+alt+f7"], "command": "schemr_next_scheme" },
-	{ "keys": ["ctrl+alt+f8"], "command": "schemr_previous_scheme" },
-	{ "keys": ["ctrl+alt+f4"], "command": "schemr_random_scheme" }
+	{ "keys": ["ctrl+alt+f7"], "command": "schemr_cycle_schemes", "args": {"direction": "next"}},
+	{ "keys": ["ctrl+alt+f8"], "command": "schemr_cycle_schemes", "args": {"direction": "prev"}},
+	{ "keys": ["ctrl+alt+f4"], "command": "schemr_cycle_schemes", "args": {"direction": "rand"}}
 ]

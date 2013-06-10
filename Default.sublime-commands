@@ -5,15 +5,18 @@
     },
     {
         "caption": "Schemr: Next scheme",
-        "command": "schemr_next_scheme"
+        "command": "schemr_cycle_schemes",
+        "args": {"direction": "next"}
     },
     {
         "caption": "Schemr: Previous scheme",
-        "command": "schemr_previous_scheme"
+        "command": "schemr_cycle_schemes",
+        "args": {"direction": "prev"}
     },
     {
         "caption": "Schemr: Random scheme",
-        "command": "schemr_random_scheme"
+        "command": "schemr_cycle_schemes",
+        "args": {"direction": "rand"}
     },
     
     {
@@ -22,15 +25,18 @@
     },
     {
         "caption": "Schemr: Next favorite scheme",
-        "command": "schemr_next_favorite_scheme"
+        "command": "schemr_cycle_favorite_schemes",
+        "args": {"direction": "next"}
     },
     {
         "caption": "Schemr: Previous favorite scheme",
-        "command": "schemr_previous_favorite_scheme"
+        "command": "schemr_cycle_favorite_schemes",
+        "args": {"direction": "prev"}
     },
     {
         "caption": "Schemr: Random favorite scheme",
-        "command": "schemr_random_favorite_scheme"
+        "command": "schemr_cycle_favorite_schemes",
+        "args": {"direction": "rand"}
     },
     {
         "caption": "Schemr: Add current scheme to favorites",

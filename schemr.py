@@ -85,7 +85,7 @@ class SchemrListSchemesCommand(sublime_plugin.WindowCommand):
 			self.window.show_quick_panel(color_schemes, on_done)
 
 	# Cycles the scheme in the given direction ("next", "prev" or "rand").
-class SchemrCycleSchemeCommand(sublime_plugin.WindowCommand):
+class SchemrCycleSchemesCommand(sublime_plugin.WindowCommand):
 	def run(self, direction):
 		color_schemes = Schemr.load_schemes()
 		the_scheme = Schemr.get_scheme()
@@ -111,10 +111,10 @@ class SchemrCycleSchemeCommand(sublime_plugin.WindowCommand):
 # SchemrCycleSchemeCommand should be used instead.
 class SchemrNextSchemeCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		self.window.run_command("schemr_cycle_scheme", {"direction": "next"})
+		self.window.run_command("schemr_cycle_schemes", {"direction": "next"})
 class SchemrPreviousSchemeCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		self.window.run_command("schemr_cycle_scheme", {"direction": "prev"})
+		self.window.run_command("schemr_cycle_schemes", {"direction": "prev"})
 class SchemrRandomSchemeCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		self.window.run_command("schemr_cycle_scheme", {"direction": "rand"})
+		self.window.run_command("schemr_cycle_schemes", {"direction": "rand"})
