@@ -1,0 +1,9 @@
+{
+    // You can add the full paths of your favorite color schemes to this list,
+    // e.g. "Packages/Color Scheme - Default/Monokai.tmTheme."  Schemr also
+    // modifies this list automatically when you use "Add current scheme to favorites"
+    // or "Remove current scheme from favorites" from the command palette.
+    "schemr_favorites":
+    [
+    ]
+}
