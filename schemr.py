@@ -86,7 +86,7 @@ class Schemr():
 				sublime.status_message(color_schemes[index][0])
 			
 			if index == -1:
-				self.set_scheme(color_schemes[the_index][1])
+				self.set_scheme(the_scheme)
 	
 		def on_select(index):
 			self.set_scheme(color_schemes[index][1])
@@ -185,12 +185,12 @@ class SchemrCycleFavoriteSchemesCommand(sublime_plugin.WindowCommand):
 			if direction == 'next':
 				for iteration in range(0, num_of_schemes):
 					index = index + 1
-					if index >= num_of_schemes: index = 0;
+					if index >= num_of_schemes: index = 0
 					if color_schemes[index][2]: break # Stop on the first favorite found.
 			elif direction == 'prev':
 				for iteration in range(0, num_of_schemes):
 					index = index - 1
-					if index < 0: index = num_of_schemes - 1;
+					if index < 0: index = num_of_schemes - 1
 					if color_schemes[index][2]: break # Stop on the first favorite found.
 			Schemr.set_scheme(color_schemes[index][1])
 			sublime.status_message(color_schemes[index][0])
