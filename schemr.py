@@ -41,7 +41,7 @@ class Schemr():
 		for scheme_path in all_scheme_paths:
 			favorited = scheme_path in favorite_scheme_paths
 			pretty_name = 'Scheme: ' + scheme_path.split('/').pop().replace('.tmTheme', '')
-			if favorited: pretty_name += ' ★'
+			if favorited: pretty_name += u' \N{BLACK STAR}' # Put a pretty star icon next to favorited schemes.  :)
 			all_schemes.append([pretty_name, scheme_path, favorited])
 			
 		all_schemes.sort()
