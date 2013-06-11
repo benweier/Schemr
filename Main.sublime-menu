@@ -18,6 +18,26 @@
 							{
 								"command": "open_file",
 								"args": {
+									"file": "${packages}/Schemr/SchemrFavorites.sublime-settings"
+								},
+								"caption": "Favorite Schemes – Default"
+							},
+							
+							{
+								"command": "open_file",
+								"args": {
+									"file": "${packages}/User/SchemrFavorites.sublime-settings"
+								},
+								"caption": "Favorite Schemes – User"
+							},
+							
+							{
+								"caption": "-"
+							},
+							
+							{
+								"command": "open_file",
+								"args": {
 									"file": "${packages}/Schemr/Default (OSX).sublime-keymap",
 									"platform": "OSX"
 								},
