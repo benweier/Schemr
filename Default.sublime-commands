@@ -1,18 +1,49 @@
 [
     {
-        "caption": "Schemr: List schemes",
+        "caption": "Schemr: List all schemes",
         "command": "schemr_list_schemes"
     },
     {
         "caption": "Schemr: Next scheme",
-        "command": "schemr_next_scheme"
+        "command": "schemr_cycle_schemes",
+        "args": {"direction": "next"}
     },
     {
         "caption": "Schemr: Previous scheme",
-        "command": "schemr_previous_scheme"
+        "command": "schemr_cycle_schemes",
+        "args": {"direction": "prev"}
     },
     {
         "caption": "Schemr: Random scheme",
-        "command": "schemr_random_scheme"
+        "command": "schemr_cycle_schemes",
+        "args": {"direction": "rand"}
+    },
+    
+    {
+        "caption": "Schemr: List favorite schemes",
+        "command": "schemr_list_favorite_schemes"
+    },
+    {
+        "caption": "Schemr: Next favorite scheme",
+        "command": "schemr_cycle_favorite_schemes",
+        "args": {"direction": "next"}
+    },
+    {
+        "caption": "Schemr: Previous favorite scheme",
+        "command": "schemr_cycle_favorite_schemes",
+        "args": {"direction": "prev"}
+    },
+    {
+        "caption": "Schemr: Random favorite scheme",
+        "command": "schemr_cycle_favorite_schemes",
+        "args": {"direction": "rand"}
+    },
+    {
+        "caption": "Schemr: Add current scheme to favorites",
+        "command": "schemr_favorite_current_scheme"
+    },
+    {
+        "caption": "Schemr: Remove current scheme from favorites",
+        "command": "schemr_unfavorite_current_scheme"
     }
 ]
