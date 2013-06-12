@@ -10,6 +10,9 @@ Schemr allows you to quickly change your color scheme with keyboard shortcuts an
 # Installation
 Install Schemr through [Package Control](http://wbond.net/sublime_packages/package_control), or download and extract it into your Packages folder.
 
+# Contributors
+* [Max](https://github.com/SyntaxColoring) - Favorites support and code refactoring
+
 # Usage
 
 **Schemr: List schemes** displays all the available schemes in alphabetical order.
