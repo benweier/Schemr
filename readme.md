@@ -17,38 +17,38 @@ Install Schemr through [Package Control](http://wbond.net/sublime_packages/packa
 
 **Schemr: List schemes** displays all the available schemes in alphabetical order.
 
-* Default binding: `Ctrl+Alt+F5` (Windows/Linux) `Cmd+Alt+F5` (OSX)
+* Default binding: `Ctrl+Alt+F5` (Windows/Linux) `Cmd+Option+F5` (OSX)
 
 **Schemr: Next scheme** switches immediately to the alphabetically next color scheme.
 
-* Default binding: `Ctrl+Alt+F7` (Windows/Linux) `Cmd+Alt+F8` (OSX)
+* Default binding: `Ctrl+Alt+F7` (Windows/Linux) `Cmd+Option+F7` (OSX)
 
 **Schemr: Previous scheme** switches immediately to the alphabetically previous color scheme.
 
-* Default binding: `Ctrl+Alt+F8` (Windows/Linux) `Cmd+Alt+F7` (OSX)
+* Default binding: `Ctrl+Alt+F8` (Windows/Linux) `Cmd+Option+F8` (OSX)
 
 **Schemr: Random scheme** switches immediately to a random color scheme that you have installed.
 
-* Default binding: `Ctrl+Alt+F4` (Windows/Linux) `Cmd+Alt+F4` (OSX)
+* Default binding: `Ctrl+Alt+F4` (Windows/Linux) `Cmd+Option+F4` (OSX)
 
 ## Favorites
 
-**Schemr: Add current scheme to favorites** and **Schemr: Remove current scheme from favorites** add and remove the currently-selected color scheme to your favorites list.
+**Schemr: Add current scheme to favorites** and **Schemr: Remove current scheme from favorites** add and remove the currently selected color scheme to your favorites list.
 
 * You can also edit your favorites list manually through **Preferences > Package Settings > Schemr**.
 
 **Schemr: List favorite schemes** displays your favorite schemes in alphabetical order.
 
-* Default binding: `Ctrl+Shift+Alt+F5` (Windows/Linux) `Cmd+Alt+F5` (OSX)
+* Default binding: `Ctrl+Shift+Alt+F5` (Windows/Linux) `Cmd+Shift+Option+F5` (OSX)
 
 **Schemr: Next favorite scheme** switches immediately to the alphabetically next color scheme in your favorites.
 
-* Default binding: `Ctrl+Shift+Alt+F7` (Windows/Linux) `Cmd+Alt+F8` (OSX)
+* Default binding: `Ctrl+Shift+Alt+F7` (Windows/Linux) `Cmd+Shift+Option+F7` (OSX)
 
 **Schemr: Previous favorite scheme** switches immediately to the alphabetically previous color scheme in your favorites.
 
-* Default binding: `Ctrl+Shift+Alt+F8` (Windows/Linux) `Cmd+Alt+F7` (OSX)
+* Default binding: `Ctrl+Shift+Alt+F8` (Windows/Linux) `Cmd+Shift+Option+F8` (OSX)
 
 **Schemr: Random favorite scheme** switches immediately to a random color scheme in your favorites.
 
-* Default binding: `Ctrl+Shift+Alt+F4` (Windows/Linux) `Cmd+Alt+F4` (OSX)
+* Default binding: `Ctrl+Shift+Alt+F4` (Windows/Linux) `Cmd+Shift+Option+F4` (OSX)
