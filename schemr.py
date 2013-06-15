@@ -74,9 +74,10 @@ class Schemr():
 		# If the active scheme isn't part of the supplied pool (the schemes variable),
 		# then we can't skip the selection to that point and the best we can do is
 		# start from the top of the list.
-		the_index = None
-		try: the_index = [scheme[1] for scheme in color_schemes].index(the_scheme)
-		except (ValueError): the_index = 0
+		try:
+			the_index = [scheme[1] for scheme in color_schemes].index(the_scheme)
+		except (ValueError):
+			the_index = 0
 
 		def on_done(index):
 			if index != -1:
@@ -95,8 +96,8 @@ class Schemr():
 			window.show_quick_panel(color_schemes, on_done)
 
 		# Sets the active scheme.
-	def set_scheme(self, s):
-		sublime.load_settings('Preferences.sublime-settings').set('color_scheme', s)
+	def set_scheme(self, scheme):
+		sublime.load_settings('Preferences.sublime-settings').set('color_scheme', scheme)
 		sublime.save_settings('Preferences.sublime-settings')
 
 		# Gets the active scheme.
