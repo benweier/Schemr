@@ -73,8 +73,12 @@ class Schemr():
 			if index == -1:
 				self.set('color_scheme', the_scheme)
 
+		self.user_selected = False
 		def on_select(index):
-			self.set('color_scheme', color_schemes[index][1])
+			if self.user_selected == True:
+				self.set('color_scheme', color_schemes[index][1])
+			else:
+				self.user_selected = True
 
 		try: # Attempt to enable preview-on-selection (only supported by Sublime Text 3).
 			window.show_quick_panel(color_schemes, on_done, 0, the_index, on_select)
