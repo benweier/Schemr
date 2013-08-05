@@ -11,8 +11,8 @@ class Schemr():
 		all_scheme_paths = []
 
 		try: # use find_resources() first for ST3
-			for scheme_resource in sublime.find_resources("*.tmTheme"):
-				all_themes.append(scheme_resource)
+			for scheme_resource in sublime.find_resources('*.tmTheme'):
+				all_scheme_paths.append(scheme_resource)
 
 		except: # fallback to walk() for ST2
 			# Load the paths for schemes contained in zipped .sublime-package files.
