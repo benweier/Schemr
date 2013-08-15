@@ -17,19 +17,19 @@ Install Schemr through [Package Control](http://wbond.net/sublime_packages/packa
 
 **Schemr: List schemes** displays all the available schemes in alphabetical order.
 
-* Default binding: `Ctrl+Alt+F5` (Windows/Linux) `Cmd+Option+F5` (OSX)
+* Default binding: <kbd>Alt+F5</kbd> (Windows/Linux) <kbd>Option+F5</kbd> (OSX)
 
 **Schemr: Next scheme** switches immediately to the alphabetically next color scheme.
 
-* Default binding: `Ctrl+Alt+F7` (Windows/Linux) `Cmd+Option+F7` (OSX)
+* Default binding: <kbd>Alt+F7</kbd> (Windows/Linux) <kbd>Option+F7</kbd> (OSX)
 
 **Schemr: Previous scheme** switches immediately to the alphabetically previous color scheme.
 
-* Default binding: `Ctrl+Alt+F8` (Windows/Linux) `Cmd+Option+F8` (OSX)
+* Default binding: <kbd>Alt+F8</kbd> (Windows/Linux) <kbd>Option+F8</kbd> (OSX)
 
 **Schemr: Random scheme** switches immediately to a random color scheme that you have installed.
 
-* Default binding: `Ctrl+Alt+F4` (Windows/Linux) `Cmd+Option+F4` (OSX)
+* Default binding: <kbd>Alt+F10</kbd> (Windows/Linux) <kbd>Option+F10</kbd> (OSX)
 
 ## Favorites
 
@@ -39,16 +39,16 @@ Install Schemr through [Package Control](http://wbond.net/sublime_packages/packa
 
 **Schemr: List favorite schemes** displays your favorite schemes in alphabetical order.
 
-* Default binding: `Ctrl+Shift+Alt+F5` (Windows/Linux) `Cmd+Shift+Option+F5` (OSX)
+* Default binding: <kbd>Alt+Shift+F5</kbd> (Windows/Linux) <kbd>Option+Shift+F5</kbd> (OSX)
 
 **Schemr: Next favorite scheme** switches immediately to the alphabetically next color scheme in your favorites.
 
-* Default binding: `Ctrl+Shift+Alt+F7` (Windows/Linux) `Cmd+Shift+Option+F7` (OSX)
+* Default binding: <kbd>Alt+Shift+F7</kbd> (Windows/Linux) <kbd>Option+Shift+F7</kbd> (OSX)
 
 **Schemr: Previous favorite scheme** switches immediately to the alphabetically previous color scheme in your favorites.
 
-* Default binding: `Ctrl+Shift+Alt+F8` (Windows/Linux) `Cmd+Shift+Option+F8` (OSX)
+* Default binding: <kbd>Alt+Shift+F8</kbd> (Windows/Linux) <kbd>Option+Shift+F8</kbd> (OSX)
 
 **Schemr: Random favorite scheme** switches immediately to a random color scheme in your favorites.
 
-* Default binding: `Ctrl+Shift+Alt+F4` (Windows/Linux) `Cmd+Shift+Option+F4` (OSX)
+* Default binding: <kbd>Alt+Shift+F10</kbd> (Windows/Linux) <kbd>Option+Shift+F10</kbd> (OSX)
