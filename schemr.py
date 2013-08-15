@@ -29,7 +29,7 @@ class Schemr():
 					filepath = os.path.join(root, filename).replace(sublime.packages_path(), 'Packages').replace('\\', '/')
 					all_scheme_paths.append(filepath)
 
-		favorite_scheme_paths = self.get('schemr_favorites', [])
+		favorite_scheme_paths = self.get_favorites()
 
 		# Given the paths of all the color schemes, add in the information for
 		# the pretty-printed name and whether or not it's been favorited.
@@ -55,7 +55,7 @@ class Schemr():
 		# Since that information is never used, it is filtered out here for convenience
 		# in passing the array to window.show_quick_panel().
 		color_schemes = [[scheme[0], scheme[1]] for scheme in schemes]
-		the_scheme = self.get('color_scheme', 'Packages/Color Scheme - Default/Monokai.tmTheme')
+		the_scheme = self.get_scheme()
 
 		# If the active scheme isn't part of the supplied pool (the schemes variable),
 		# then we can't skip the selection to that point and the best we can do is
@@ -67,16 +67,16 @@ class Schemr():
 
 		def on_done(index):
 			if index != -1:
-				self.set('color_scheme', color_schemes[index][1])
+				self.set_scheme(color_schemes[index][1])
 				sublime.status_message(color_schemes[index][0])
 
 			if index == -1:
-				self.set('color_scheme', the_scheme)
+				self.set_scheme(the_scheme)
 
 		self.user_selected = False
 		def on_select(index):
 			if self.user_selected == True:
-				self.set('color_scheme', color_schemes[index][1])
+				self.set_scheme(color_schemes[index][1])
 			else:
 				self.user_selected = True
 
@@ -87,7 +87,7 @@ class Schemr():
 
 		# Cycles the scheme in the given direction ("next", "prev" or "rand").
 	def cycle_schemes(self, color_schemes, direction):
-		the_scheme = Schemr.get('color_scheme', 'Packages/Color Scheme - Default/Monokai.tmTheme')
+		the_scheme = Schemr.get_scheme()
 		num_of_schemes = len(color_schemes)
 		# Try to find the current scheme path in the available schemes otherwise
 		# start from the top of the list. Useful in case the user has manually
@@ -106,15 +106,22 @@ class Schemr():
 		if direction == 'rand':
 			index = int(random() * len(color_schemes))
 
-		Schemr.set('color_scheme', color_schemes[index][1])
+		Schemr.set_scheme(color_schemes[index][1])
 		sublime.status_message(color_schemes[index][0])
 
-	def set(self, setting, value):
-		sublime.load_settings('Preferences.sublime-settings').set(setting, value)
+	def set_scheme(self, scheme):
+		sublime.load_settings('Preferences.sublime-settings').set('color_scheme', scheme)
 		sublime.save_settings('Preferences.sublime-settings')
 
-	def get(self, setting, default):
-		return sublime.load_settings('Preferences.sublime-settings').get(setting, default)
+	def get_scheme(self):
+		return sublime.load_settings('Preferences.sublime-settings').get('color_scheme')
+
+	def set_favorites(self, schemes):
+		sublime.load_settings('SchemrFavorites.sublime-settings').set('schemr_favorites', schemes)
+		sublime.save_settings('SchemrFavorites.sublime-settings')
+
+	def get_favorites(self):
+		return sublime.load_settings('SchemrFavorites.sublime-settings').get('schemr_favorites')
 
 Schemr = Schemr()
 
@@ -131,28 +138,28 @@ class SchemrListFavoriteSchemesCommand(sublime_plugin.WindowCommand):
 		Schemr.list_schemes(self.window, [scheme for scheme in Schemr.load_schemes() if scheme[2]])
 
 	def is_enabled(self):
-		return len(Schemr.get('schemr_favorites', [])) > 0
+		return len(Schemr.get_favorites()) > 0
 
 	# SchemrFavoriteCurrentSchemeCommand and SchemrUnfavoriteCurrentSchemeCommand
 	# work in conjunction. Only one is ever available to the user at a time,
 	# depending on whether or not the active scheme is already favorited.
 class SchemrFavoriteCurrentSchemeCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		favorites = Schemr.get('schemr_favorites', [])
-		favorites.append(Schemr.get('color_scheme', 'Packages/Color Scheme - Default/Monokai.tmTheme'))
-		Schemr.set('schemr_favorites', favorites)
+		favorites = Schemr.get_favorites()
+		favorites.append(Schemr.get_scheme())
+		Schemr.set_favorites(favorites)
 
 	def is_enabled(self):
-		return Schemr.get('color_scheme', 'Packages/Color Scheme - Default/Monokai.tmTheme') not in Schemr.get('schemr_favorites', [])
+		return Schemr.get_scheme() not in Schemr.get_favorites()
 
 class SchemrUnfavoriteCurrentSchemeCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		favorites = Schemr.get('schemr_favorites', [])
-		favorites.remove(Schemr.get('color_scheme', 'Packages/Color Scheme - Default/Monokai.tmTheme'))
-		Schemr.set('schemr_favorites', favorites)
+		favorites = Schemr.get_favorites()
+		favorites.remove(Schemr.get_scheme())
+		Schemr.set_favorites(favorites)
 
 	def is_enabled(self):
-		return Schemr.get('color_scheme', 'Packages/Color Scheme - Default/Monokai.tmTheme') in Schemr.get('schemr_favorites', [])
+		return Schemr.get_scheme() in Schemr.get_favorites()
 
 	# Cycles the full list of schemes that are available
 	# regardless of whether or not they are favorited.
@@ -167,7 +174,7 @@ class SchemrCycleFavoriteSchemesCommand(sublime_plugin.WindowCommand):
 		Schemr.cycle_schemes([scheme for scheme in Schemr.load_schemes() if scheme[2]], direction)
 
 	def is_enabled(self):
-		return len(Schemr.get('schemr_favorites', [])) > 1
+		return len(Schemr.get_favorites()) > 1
 
 	# These commands are provided for backwards-compatibility.
 	# SchemrCycleSchemeCommand should be used instead.
