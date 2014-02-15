@@ -5,6 +5,7 @@ Schemr allows you to quickly change your color scheme using the command palette 
 * Full compatibility with Sublime Text 2 and 3.
 * Previews the selected color scheme as you navigate up/down through the quick panel. [ST3 ONLY]
 * Allows color schemes to be favorited for even faster access.
+* Display [Dark] or [Light] in scheme list to easily filter by type. [ST3 ONLY]
 * Automatically loads all available `.tmTheme` files, including those found inside `.sublime-package` files.
 
 # Installation
