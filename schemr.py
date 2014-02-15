@@ -2,7 +2,11 @@ import sublime, sublime_plugin
 import os, zipfile
 from random import random
 
-import Schemr.plist_parser as parser
+try:
+	import Schemr.lib.plist_parser as parser
+except:
+	sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
+	import plist_parser as parser
 
 	# Contains various common, internal functions for Schemr.
 class Schemr():
@@ -13,10 +17,16 @@ class Schemr():
 		all_scheme_paths = []
 
 		# Parse the scheme file for the background colour and return the luminosity
-		# in order to determine if the scheme is Dark or Light
+		# in order to determine if the scheme is Dark or Light. Use load_resources()
+		# first for ST3 or fallback to the absolute path for ST2.
 		def parse_scheme(scheme):
-			xml = sublime.load_resource(scheme)
-			plist = parser.parse_string(xml)
+			try:
+				xml = sublime.load_resource(scheme)
+				plist = parser.parse_string(xml)
+			except:
+				xml = os.path.join(sublime.packages_path(), scheme.replace('Packages/', ''))
+				plist = parser.parse_file(xml)
+
 			background_colour =  plist['settings'][0]['settings']['background']
 			n = eval('0x' + background_colour[1:])
 			return (n>>16)&0xff, (n>>8)&0xff, n&0xff
