@@ -1,5 +1,5 @@
 import sublime, sublime_plugin
-import os, zipfile
+import sys, os, zipfile
 from random import random
 
 try:
