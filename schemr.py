@@ -93,9 +93,9 @@ class Schemr():
 			if index == -1:
 				self.set_scheme(the_scheme)
 
-		# Set a selection flag to detect when the panel is first opened. This prevents
-		# the colour scheme from 'flickering' from one scheme to another as the panel
-		# jumps to the active selection
+		# Set a selection flag to detect when the panel is first opened in some
+		# versions of Sublime Text. This prevents the colour scheme from 'flickering'
+		# from one scheme to another as the panel jumps to the active selection
 		self.user_selected = False
 		def on_select(index):
 			if self.user_selected == True:
