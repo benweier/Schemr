@@ -2,6 +2,8 @@ import sublime, sublime_plugin
 import os, zipfile
 from random import random
 
+import Schemr.plist_parser as parser
+
 	# Contains various common, internal functions for Schemr.
 class Schemr():
 		# Returns a list of all managed schemes.  Each scheme is itself represented by a list
@@ -9,6 +11,15 @@ class Schemr():
 		# or not it is favorited (True or False).
 	def load_schemes(self):
 		all_scheme_paths = []
+
+		# Parse the scheme file for the background colour and return the luminosity
+		# in order to determine if the scheme is Dark or Light
+		def parse_scheme(scheme):
+			xml = sublime.load_resource(scheme)
+			plist = parser.parse_string(xml)
+			background_colour =  plist['settings'][0]['settings']['background']
+			n = eval('0x' + background_colour[1:])
+			return (n>>16)&0xff, (n>>8)&0xff, n&0xff
 
 		try: # use find_resources() first for ST3
 			for scheme_resource in sublime.find_resources('*.tmTheme'):
@@ -35,8 +46,17 @@ class Schemr():
 		# the pretty-printed name and whether or not it's been favorited.
 		all_schemes = []
 		for scheme_path in all_scheme_paths:
+			pretty_name = scheme_path.split('/').pop().replace('.tmTheme', '')
+			# Get the RGB value of the scheme background and convert to luminance value
+			rgb = parse_scheme(scheme_path)
+			luminance = (0.2126 * rgb[0]) + (0.7152 * rgb[1]) + (0.0722 * rgb[2])
+			# If the luminance is above or below than a certain theshold
+			# then assign a flag to the end of the name
+			if luminance < 120:
+				pretty_name += '   [Dark]'
+			else:
+				pretty_name += '   [Light]'
 			favorited = scheme_path in favorite_scheme_paths
-			pretty_name = 'Scheme: ' + scheme_path.split('/').pop().replace('.tmTheme', '')
 			if favorited: pretty_name += u' \N{BLACK STAR}' # Put a pretty star icon next to favorited schemes. :)
 			all_schemes.append([pretty_name, scheme_path, favorited])
 
@@ -54,7 +74,7 @@ class Schemr():
 		# (The stars that appear after favorited schemes' names are added in load_schemes().)
 		# Since that information is never used, it is filtered out here for convenience
 		# in passing the array to window.show_quick_panel().
-		color_schemes = [[scheme[0], scheme[1]] for scheme in schemes]
+		color_schemes = [['Scheme: ' + scheme[0], scheme[1]] for scheme in schemes]
 		the_scheme = self.get_scheme()
 
 		# If the active scheme isn't part of the supplied pool (the schemes variable),
@@ -73,6 +93,9 @@ class Schemr():
 			if index == -1:
 				self.set_scheme(the_scheme)
 
+		# Set a selection flag to detect when the panel is first opened. This prevents
+		# the colour scheme from 'flickering' from one scheme to another as the panel
+		# jumps to the active selection
 		self.user_selected = False
 		def on_select(index):
 			if self.user_selected == True:
@@ -124,6 +147,9 @@ class Schemr():
 		return sublime.load_settings('SchemrFavorites.sublime-settings').get('schemr_favorites')
 
 Schemr = Schemr()
+
+def plugin_loaded():
+	print('schemr ready')
 
 	# Display the full list of schemes available, regardless
 	# of whether or not they are favorited
