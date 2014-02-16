@@ -27,9 +27,10 @@ class Schemr():
 				xml = os.path.join(sublime.packages_path(), scheme.replace('Packages/', ''))
 				plist = parser.parse_file(xml)
 
-			background_colour =  plist['settings'][0]['settings']['background']
-			n = eval('0x' + background_colour[1:])
-			return (n>>16)&0xff, (n>>8)&0xff, n&0xff
+			background_colour =  plist['settings'][0]['settings']['background'].lstrip('#')
+			r, g, b = background_colour[-6:-4], background_colour[-4:-2], background_colour[-2:]
+			r, g, b = [int(n, 16) for n in (r, g, b)]
+			return (r, g, b)
 
 		try: # use find_resources() first for ST3
 			for scheme_resource in sublime.find_resources('*.tmTheme'):
