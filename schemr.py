@@ -2,9 +2,9 @@ import sublime, sublime_plugin
 import sys, os, zipfile
 from random import random
 
-try:
+try: # ST3
 	import Schemr.lib.plist_parser as parser
-except:
+except: # ST2
 	sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
 	import plist_parser as parser
 
@@ -16,7 +16,7 @@ class Schemr():
 	def load_schemes(self):
 		all_scheme_paths = []
 
-		# Parse the scheme file for the background colour and return the luminosity
+		# Parse the scheme file for the background colour and return the RGB values
 		# in order to determine if the scheme is Dark or Light. Use load_resources()
 		# first for ST3 or fallback to the absolute path for ST2.
 		def parse_scheme(scheme):
@@ -52,20 +52,26 @@ class Schemr():
 
 		favorite_scheme_paths = self.get_favorites()
 
+		# Get the user-defined settings or return default values
+		p = sublime.load_settings('Preferences.sublime-settings')
+		schemr_brightness_theshold = p.get('schemr_brightness_theshold', 120)
+		schemr_brightness_flags = p.get('schemr_brightness_flags', True)
+
 		# Given the paths of all the color schemes, add in the information for
 		# the pretty-printed name and whether or not it's been favorited.
 		all_schemes = []
 		for scheme_path in all_scheme_paths:
 			pretty_name = scheme_path.split('/').pop().replace('.tmTheme', '')
-			# Get the RGB value of the scheme background and convert to luminance value
-			rgb = parse_scheme(scheme_path)
-			luminance = (0.2126 * rgb[0]) + (0.7152 * rgb[1]) + (0.0722 * rgb[2])
-			# If the luminance is above or below than a certain theshold
-			# then assign a flag to the end of the name
-			if luminance < 120:
-				pretty_name += '   [Dark]'
-			else:
-				pretty_name += '   [Light]'
+			# Add scheme brightness flags to the quick panel if the luminance is above
+			# or below a certain theshold and the user has not disabled it
+			if schemr_brightness_flags:
+				# Get the RGB value of the scheme background and convert to luminance value
+				rgb = parse_scheme(scheme_path)
+				luminance = (0.2126 * rgb[0]) + (0.7152 * rgb[1]) + (0.0722 * rgb[2])
+				if luminance < schemr_brightness_theshold:
+					pretty_name += '   [Dark]'
+				else:
+					pretty_name += '   [Light]'
 			favorited = scheme_path in favorite_scheme_paths
 			if favorited: pretty_name += u' \N{BLACK STAR}' # Put a pretty star icon next to favorited schemes. :)
 			all_schemes.append([pretty_name, scheme_path, favorited])
