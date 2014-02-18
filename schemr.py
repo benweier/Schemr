@@ -34,7 +34,7 @@ class Schemr():
 
 			if len(background_colour) == 3:
 				# Shorthand value, e.g. #111
-				r, g, b = background_colour[:1], background_colour[1:2], background_colour[2:]
+				r, g, b = background_colour[:1] + background_colour[:1], background_colour[1:2] + background_colour[1:2], background_colour[2:] + background_colour[2:]
 			else:
 				# Full-length colour value, e.g. #111111 or #FFEEEEEE
 				# Here we assume the order of hex values is #AARRGGBB
