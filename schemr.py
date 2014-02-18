@@ -27,8 +27,20 @@ class Schemr():
 				xml = os.path.join(sublime.packages_path(), scheme.replace('Packages/', ''))
 				plist = parser.parse_file(xml)
 
-			background_colour =  plist['settings'][0]['settings']['background'].lstrip('#')
-			r, g, b = background_colour[-6:-4], background_colour[-4:-2], background_colour[-2:]
+			try:
+				background_colour = plist['settings'][0]['settings']['background'].lstrip('#')
+			except (KeyError): # tmTheme is missing a background colour
+				background_colour = '000'
+
+			if len(background_colour) == 3:
+				# Shorthand value, e.g. #111
+				r, g, b = background_colour[:1], background_colour[1:2], background_colour[2:]
+			else:
+				# Full-length colour value, e.g. #111111 or #FFEEEEEE
+				# Here we assume the order of hex values is #AARRGGBB
+				# and so work backwards from the end of the string.
+				r, g, b = background_colour[-6:-4], background_colour[-4:-2], background_colour[-2:]
+				
 			r, g, b = [int(n, 16) for n in (r, g, b)]
 			return (r, g, b)
 
