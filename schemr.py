@@ -1,5 +1,5 @@
 import sublime, sublime_plugin
-import sys, os, zipfile
+import sys, os, re, zipfile
 from random import random
 
 try: # ST3
@@ -14,7 +14,13 @@ class Schemr():
 		# that contains, in order, (1) its pretty-printed name, (2) its path and (3) whether
 		# or not it is favorited (True or False).
 	def load_schemes(self):
+		# Get the user-defined settings or return default values
+		p = sublime.load_settings('Preferences.sublime-settings')
+		schemr_brightness_theshold = p.get('schemr_brightness_theshold', 100)
+		schemr_brightness_flags = p.get('schemr_brightness_flags', True)
+
 		all_scheme_paths = []
+		favorite_scheme_paths = self.get_favorites()
 
 		# Parse the scheme file for the background colour and return the RGB values
 		# in order to determine if the scheme is Dark or Light. Use load_resources()
@@ -32,22 +38,21 @@ class Schemr():
 			except (KeyError): # tmTheme is missing a background colour
 				background_colour = '000'
 
-			if len(background_colour) == 3:
-				# Shorthand value, e.g. #111
-				# Repeat the values for correct base 16 conversion
-				r, g, b = background_colour[:1] + background_colour[:1], background_colour[1:2] + background_colour[1:2], background_colour[2:] + background_colour[2:]
-			else:
+			if len(background_colour) is 6:
 				# Full-length colour value, e.g. #111111 or #FFEEEEEE
 				# Here we assume the order of hex values is #AARRGGBB
 				# and so work backwards from the end of the string.
 				r, g, b = background_colour[-6:-4], background_colour[-4:-2], background_colour[-2:]
+			else:
+				# Shorthand value, e.g. #111
+				# Repeat the values for correct base 16 conversion
+				r, g, b = background_colour[:1] + background_colour[:1], background_colour[1:2] + background_colour[1:2], background_colour[2:] + background_colour[2:]
 
 			r, g, b = [int(n, 16) for n in (r, g, b)]
 			return (r, g, b)
 
 		try: # use find_resources() first for ST3
-			for scheme_resource in sublime.find_resources('*.tmTheme'):
-				all_scheme_paths.append(scheme_resource)
+			all_scheme_paths = sublime.find_resources('*.tmTheme')
 
 		except: # fallback to walk() for ST2
 			# Load the paths for schemes contained in zipped .sublime-package files.
@@ -64,12 +69,9 @@ class Schemr():
 					filepath = os.path.join(root, filename).replace(sublime.packages_path(), 'Packages').replace('\\', '/')
 					all_scheme_paths.append(filepath)
 
-		favorite_scheme_paths = self.get_favorites()
-
-		# Get the user-defined settings or return default values
-		p = sublime.load_settings('Preferences.sublime-settings')
-		schemr_brightness_theshold = p.get('schemr_brightness_theshold', 120)
-		schemr_brightness_flags = p.get('schemr_brightness_flags', True)
+		# Filter out SublimeLinter-generated schemes
+		regex = re.compile('(SL)')
+		all_scheme_paths = [scheme for scheme in all_scheme_paths if not regex.search(scheme)]
 
 		# Given the paths of all the color schemes, add in the information for
 		# the pretty-printed name and whether or not it's been favorited.
