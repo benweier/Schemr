@@ -38,15 +38,15 @@ class Schemr():
 			except (KeyError): # tmTheme is missing a background colour
 				background_colour = '000'
 
-			if len(background_colour) is 6:
+			if len(background_colour) is 3:
+				# Shorthand value, e.g. #111
+				# Repeat the values for correct base 16 conversion
+				r, g, b = background_colour[:1] + background_colour[:1], background_colour[1:2] + background_colour[1:2], background_colour[2:] + background_colour[2:]
+			else:
 				# Full-length colour value, e.g. #111111 or #FFEEEEEE
 				# Here we assume the order of hex values is #AARRGGBB
 				# and so work backwards from the end of the string.
 				r, g, b = background_colour[-6:-4], background_colour[-4:-2], background_colour[-2:]
-			else:
-				# Shorthand value, e.g. #111
-				# Repeat the values for correct base 16 conversion
-				r, g, b = background_colour[:1] + background_colour[:1], background_colour[1:2] + background_colour[1:2], background_colour[2:] + background_colour[2:]
 
 			r, g, b = [int(n, 16) for n in (r, g, b)]
 			return (r, g, b)
