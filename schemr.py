@@ -70,7 +70,7 @@ class Schemr():
 					all_scheme_paths.append(filepath)
 
 		# Filter out SublimeLinter-generated schemes
-		regex = re.compile('(SL)')
+		regex = re.compile('\(SL\)', re.IGNORECASE)
 		all_scheme_paths = [scheme for scheme in all_scheme_paths if not regex.search(scheme)]
 
 		# Given the paths of all the color schemes, add in the information for
@@ -78,6 +78,7 @@ class Schemr():
 		all_schemes = []
 		for scheme_path in all_scheme_paths:
 			pretty_name = scheme_path.split('/').pop().replace('.tmTheme', '')
+			flag = ''
 			# Add scheme brightness flags to the quick panel if the luminance is above
 			# or below a certain theshold and the user has not disabled it
 			if schemr_brightness_flags:
@@ -85,12 +86,12 @@ class Schemr():
 				rgb = parse_scheme(scheme_path)
 				luminance = (0.2126 * rgb[0]) + (0.7152 * rgb[1]) + (0.0722 * rgb[2])
 				if luminance < schemr_brightness_theshold:
-					pretty_name += '   [Dark]'
+					flag += '   [Dark]'
 				else:
-					pretty_name += '   [Light]'
+					flag += '   [Light]'
 			favorited = scheme_path in favorite_scheme_paths
-			if favorited: pretty_name += u' \N{BLACK STAR}' # Put a pretty star icon next to favorited schemes. :)
-			all_schemes.append([pretty_name, scheme_path, favorited])
+			if favorited: flag += u' \N{BLACK STAR}' # Put a pretty star icon next to favorited schemes. :)
+			all_schemes.append([pretty_name, scheme_path, favorited, flag])
 
 		all_schemes.sort()
 		return all_schemes
@@ -102,20 +103,24 @@ class Schemr():
 		# underlying schemes that they operate on.  This method exists to provide that
 		# common listing functionality.
 	def list_schemes(self, window, schemes):
-		# In listing a scheme, whether or not it is favorited is never considered.
-		# (The stars that appear after favorited schemes' names are added in load_schemes().)
-		# Since that information is never used, it is filtered out here for convenience
-		# in passing the array to window.show_quick_panel().
-		color_schemes = [['Scheme: ' + scheme[0], scheme[1]] for scheme in schemes]
-		the_scheme = self.get_scheme()
+		the_scheme_path = self.get_scheme()
+
+		# Remove SublimeLinter-generated flag from the active scheme
+		regex = re.compile('(\ \(SL\))?.tmTheme', re.IGNORECASE)
+		the_scheme_name = re.sub(regex, '', the_scheme_path).split('/').pop()
 
 		# If the active scheme isn't part of the supplied pool (the schemes variable),
 		# then we can't skip the selection to that point and the best we can do is
 		# start from the top of the list.
 		try:
-			the_index = [scheme[1] for scheme in color_schemes].index(the_scheme)
+			the_index = [scheme[0] for scheme in schemes].index(the_scheme_name)
 		except (ValueError):
 			the_index = 0
+
+		# In listing a scheme, whether or not it is favorited is never considered.
+		# Since that information is never used, it is filtered out here for convenience
+		# in passing the array to window.show_quick_panel().
+		color_schemes = [['Scheme: ' + scheme[0] + scheme[3], scheme[1]] for scheme in schemes]
 
 		def on_done(index):
 			if index != -1:
@@ -123,7 +128,7 @@ class Schemr():
 				sublime.status_message(color_schemes[index][0])
 
 			if index == -1:
-				self.set_scheme(the_scheme)
+				self.set_scheme(the_scheme_path)
 
 		# Set a selection flag to detect when the panel is first opened in some
 		# versions of Sublime Text. This prevents the colour scheme from 'flickering'
@@ -141,14 +146,19 @@ class Schemr():
 			window.show_quick_panel(color_schemes, on_done)
 
 		# Cycles the scheme in the given direction ("next", "prev" or "rand").
-	def cycle_schemes(self, color_schemes, direction):
-		the_scheme = Schemr.get_scheme()
-		num_of_schemes = len(color_schemes)
+	def cycle_schemes(self, schemes, direction):
+		the_scheme_path = self.get_scheme()
+		num_of_schemes = len(schemes)
+
+		# Remove SublimeLinter-generated flag from the active scheme
+		regex = re.compile('(\ \(SL\))?.tmTheme', re.IGNORECASE)
+		the_scheme_name = re.sub(regex, '', the_scheme_path).split('/').pop()
+
 		# Try to find the current scheme path in the available schemes otherwise
 		# start from the top of the list. Useful in case the user has manually
 		# saved an invalid scheme path or the current scheme file is not available.
 		try:
-			the_index = [scheme[1] for scheme in color_schemes].index(the_scheme)
+			the_index = [scheme[0] for scheme in schemes].index(the_scheme_name)
 		except (ValueError):
 			the_index = 0
 
@@ -159,10 +169,10 @@ class Schemr():
 			index = the_index - 1 if the_index > 0 else num_of_schemes - 1
 
 		if direction == 'rand':
-			index = int(random() * len(color_schemes))
+			index = int(random() * len(schemes))
 
-		Schemr.set_scheme(color_schemes[index][1])
-		sublime.status_message(color_schemes[index][0])
+		self.set_scheme(schemes[index][1])
+		sublime.status_message(schemes[index][0])
 
 	def set_scheme(self, scheme):
 		sublime.load_settings('Preferences.sublime-settings').set('color_scheme', scheme)
