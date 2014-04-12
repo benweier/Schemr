@@ -14,17 +14,6 @@ Install Schemr through [Package Control](https://sublime.wbond.net/), or downloa
 # Contributors
 * [Max](https://github.com/SyntaxColoring) - Favorites support and code refactoring
 
-# User Settings
-There are two settings available to control some of Schemr's behaviour. Add them to `Preferences.sublime-settings` if you wish to override the default value.
-
-`schemr_brightness_threshold`: Integer 0-255. Defaults to 120.
-
-The brightness theshold setting allows you to define where the cutoff occurs between Dark and Light themes. Higher values indicate increasing brightess approaching white rgb(255, 255, 255), while lower values indicate decreasing brightess approaching black rgb(0, 0, 0).
-
-`schemr_brightness_flags`: Boolean true|false. Defaults to true.
-
-The brightness flags setting allows you to disable the "[Dark]" or "[Light]" text that appears after the scheme name in the quick panel. Disabling this will turn off colour scheme parsing entirely and may increase performance if you have a large number of schemes.
-
 # Usage
 
 **Schemr: List schemes** displays all the available schemes in alphabetical order.
@@ -64,3 +53,20 @@ The brightness flags setting allows you to disable the "[Dark]" or "[Light]" tex
 **Schemr: Random favorite scheme** switches immediately to a random color scheme in your favorites.
 
 * Default binding: <kbd>Alt+Shift+F10</kbd> (Windows/Linux) <kbd>Option+Shift+F10</kbd> (OSX)
+
+# User Settings
+There are two settings available to control some of Schemr's behaviour. Add them to `Preferences.sublime-settings` if you wish to override the default value.
+
+`schemr_brightness_threshold`: Integer 0-255. Defaults to 120.
+
+The brightness theshold setting allows you to define where the cutoff occurs between Dark and Light themes. Higher values indicate increasing brightess approaching white rgb(255, 255, 255), while lower values indicate decreasing brightess approaching black rgb(0, 0, 0).
+
+`schemr_brightness_flags`: Boolean true|false. Defaults to true.
+
+The brightness flags setting allows you to disable the "[Dark]" or "[Light]" text that appears after the scheme name in the quick panel. Disabling this will turn off colour scheme parsing entirely and may increase performance if you have a large number of schemes.
+
+### Note about [SublimeLinter](https://sublime.wbond.net/packages/SublimeLinter)
+
+To improve the user experience, Schemr filters schemes that contain `(SL)` from being listed or activated with the Previous/Next/Random Scheme commands.
+
+If a colour scheme does not define colours for the [SublimeLinter](https://sublime.wbond.net/packages/SublimeLinter) plugin, it will be extended and the updated scheme file written to a file with `(SL)` at the end of the name. If you have a lot of schemes and switch between them frequently this can quickly pollute the scheme list with many duplicates. You only need to activate the base colour scheme and SublimeLinter will switch to the `(SL)` version automatically.
