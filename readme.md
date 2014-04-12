@@ -65,8 +65,8 @@ The brightness theshold setting allows you to define where the cutoff occurs bet
 
 The brightness flags setting allows you to disable the "[Dark]" or "[Light]" text that appears after the scheme name in the quick panel. Disabling this will turn off colour scheme parsing entirely and may increase performance if you have a large number of schemes.
 
-### Note about [SublimeLinter](https://sublime.wbond.net/packages/SublimeLinter)
+# Note about [SublimeLinter](https://sublime.wbond.net/packages/SublimeLinter)
 
-To improve the user experience, Schemr filters schemes that contain `(SL)` from being listed or activated with the Previous/Next/Random Scheme commands.
+To improve the user experience, Schemr filters schemes that contain `(SL)` from being listed or activated with Schemr commands. These schemes can still be enabled manually through the application menu or user settings file.
 
-If a colour scheme does not define colours for the [SublimeLinter](https://sublime.wbond.net/packages/SublimeLinter) plugin, it will be extended and the updated scheme file written to a file with `(SL)` at the end of the name. If you have a lot of schemes and switch between them frequently this can quickly pollute the scheme list with many duplicates. You only need to activate the base colour scheme and SublimeLinter will switch to the `(SL)` version automatically.
+If a colour scheme does not define colours for the [SublimeLinter](https://sublime.wbond.net/packages/SublimeLinter) plugin, it will be extended and the updated scheme written to a file with `(SL)` appended to the name. If you have a lot of schemes and switch between them frequently this can quickly pollute the scheme list with many duplicates. You only need to activate the base colour scheme and SublimeLinter will switch to the `(SL)` version automatically.
