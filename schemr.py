@@ -26,14 +26,14 @@ class Schemr():
 		# in order to determine if the scheme is Dark or Light. Use load_resources()
 		# first for ST3 or fallback to the absolute path for ST2.
 		def parse_scheme(scheme):
-			try:
+			if (int(sublime.version()) >= 3000):
 				xml = sublime.load_resource(scheme)
 				try:
 					plist = parser.parse_string(xml)
 				except (parser.PropertyListParseError):
 					print('Error parsing ' + scheme)
 					return (0, 0, 0)
-			except (AttributeError):
+			else:
 				xml = os.path.join(sublime.packages_path(), scheme.replace('Packages/', ''))
 				try:
 					plist = parser.parse_file(xml)
