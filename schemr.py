@@ -101,7 +101,7 @@ class Schemr():
 			if favorited: flag += u' \N{BLACK STAR}' # Put a pretty star icon next to favorited schemes. :)
 			all_schemes.append([pretty_name, scheme_path, favorited, flag])
 
-		all_schemes.sort()
+		all_schemes.sort(key=lambda s: s[0].lower())
 		return all_schemes
 
 		# Displayes the given schemes in a quick-panel, letting the user cycle through
