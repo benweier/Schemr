@@ -4,7 +4,7 @@ from random import random
 
 try: # ST3
 	import Schemr.lib.plist_parser as parser
-except: # ST2
+except (ImportError): # ST2
 	sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
 	import plist_parser as parser
 
@@ -28,15 +28,23 @@ class Schemr():
 		def parse_scheme(scheme):
 			try:
 				xml = sublime.load_resource(scheme)
-				plist = parser.parse_string(xml)
-			except:
+				try:
+					plist = parser.parse_string(xml)
+				except (parser.PropertyListParseError):
+					print('Error parsing ' + scheme)
+					return (0, 0, 0)
+			except (AttributeError):
 				xml = os.path.join(sublime.packages_path(), scheme.replace('Packages/', ''))
-				plist = parser.parse_file(xml)
+				try:
+					plist = parser.parse_file(xml)
+				except (parser.PropertyListParseError):
+					print('Error parsing ' + scheme)
+					return (0, 0, 0)
 
 			try:
 				background_colour = plist['settings'][0]['settings']['background'].lstrip('#')
 			except (KeyError): # tmTheme is missing a background colour
-				background_colour = '000'
+				return (0, 0, 0)
 
 			if len(background_colour) is 3:
 				# Shorthand value, e.g. #111
