@@ -128,7 +128,7 @@ class Schemr():
 		# In listing a scheme, whether or not it is favorited is never considered.
 		# Since that information is never used, it is filtered out here for convenience
 		# in passing the array to window.show_quick_panel().
-		color_schemes = [['Scheme: ' + scheme[0] + scheme[3], scheme[1]] for scheme in schemes]
+		color_schemes = [[scheme[0] + scheme[3], scheme[1]] for scheme in schemes]
 
 		def on_done(index):
 			if index != -1:
