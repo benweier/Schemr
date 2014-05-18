@@ -113,10 +113,7 @@ class Schemr():
 		# common listing functionality.
 	def list_schemes(self, window, schemes):
 		the_scheme_path = self.get_scheme()
-
-		# Remove SublimeLinter-generated flag from the active scheme
-		regex = re.compile('(\ \(SL\))?.tmTheme', re.IGNORECASE)
-		the_scheme_name = re.sub(regex, '', the_scheme_path).split('/').pop()
+		the_scheme_name = self.filter_scheme_name(the_scheme_path)
 
 		# If the active scheme isn't part of the supplied pool (the schemes variable),
 		# then we can't skip the selection to that point and the best we can do is
@@ -159,12 +156,8 @@ class Schemr():
 
 		# Cycles the scheme in the given direction ("next", "prev" or "rand").
 	def cycle_schemes(self, schemes, direction):
-		the_scheme_path = self.get_scheme()
+		the_scheme_name = self.filter_scheme_name(self.get_scheme())
 		num_of_schemes = len(schemes)
-
-		# Remove SublimeLinter-generated flag from the active scheme
-		regex = re.compile('(\ \(SL\))?.tmTheme', re.IGNORECASE)
-		the_scheme_name = re.sub(regex, '', the_scheme_path).split('/').pop()
 
 		# Try to find the current scheme path in the available schemes otherwise
 		# start from the top of the list. Useful in case the user has manually
@@ -201,7 +194,7 @@ class Schemr():
 		return sublime.load_settings('SchemrFavorites.sublime-settings').get('schemr_favorites')
 
 	def filter_scheme_name(self, scheme_path):
-		regex = re.compile('(\ \(SL\))?.tmTheme', re.IGNORECASE)
+		regex = re.compile('(\ \(SL\))|(\ Color Highlighter)?.tmTheme', re.IGNORECASE)
 		scheme_name = re.sub(regex, '', scheme_path).split('/').pop()
 		return scheme_name
 
