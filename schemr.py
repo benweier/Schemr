@@ -79,7 +79,7 @@ class Schemr():
 					all_scheme_paths.append(filepath)
 
 		# Filter out SublimeLinter-generated schemes
-		regex = re.compile('\(SL\)', re.IGNORECASE)
+		regex = re.compile('\(SL\)|Color Highlighter', re.IGNORECASE)
 		all_scheme_paths = [scheme for scheme in all_scheme_paths if not regex.search(scheme)]
 
 		# Given the paths of all the color schemes, add in the information for
