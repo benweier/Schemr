@@ -16,8 +16,9 @@ class Schemr():
 	def load_schemes(self):
 		# Get the user-defined settings or return default values
 		p = sublime.load_settings('Preferences.sublime-settings')
-		schemr_brightness_theshold = p.get('schemr_brightness_theshold', 100)
-		schemr_brightness_flags = p.get('schemr_brightness_flags', True)
+		self.schemr_brightness_theshold = p.get('schemr_brightness_theshold', 100)
+		self.schemr_brightness_flags = p.get('schemr_brightness_flags', True)
+		self.schemr_preview_selection = p.get('schemr_preview_selection', True)
 
 		all_scheme_paths = []
 		favorite_scheme_paths = self.get_favorites()
@@ -89,11 +90,11 @@ class Schemr():
 			flag = ''
 			# Add scheme brightness flags to the quick panel if the luminance is above
 			# or below a certain theshold and the user has not disabled it
-			if schemr_brightness_flags:
+			if self.schemr_brightness_flags:
 				# Get the RGB value of the scheme background and convert to luminance value
 				rgb = parse_scheme(scheme_path)
 				luminance = (0.2126 * rgb[0]) + (0.7152 * rgb[1]) + (0.0722 * rgb[2])
-				if luminance < schemr_brightness_theshold:
+				if luminance < self.schemr_brightness_theshold:
 					flag += '   [Dark]'
 				else:
 					flag += '   [Light]'
@@ -149,7 +150,10 @@ class Schemr():
 				self.user_selected = True
 
 		try: # Attempt to enable preview-on-selection (only supported by Sublime Text 3).
-			window.show_quick_panel(color_schemes, on_done, 0, the_index, on_select)
+			if self.schemr_preview_selection is True:
+				window.show_quick_panel(color_schemes, on_done, 0, the_index, on_select)
+			else:
+				window.show_quick_panel(color_schemes, on_done)
 		except:
 			window.show_quick_panel(color_schemes, on_done)
 
