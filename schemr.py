@@ -153,7 +153,7 @@ class Schemr():
 			if self.schemr_preview_selection is True:
 				window.show_quick_panel(color_schemes, on_done, 0, the_index, on_select)
 			else:
-				window.show_quick_panel(color_schemes, on_done)
+				window.show_quick_panel(color_schemes, on_done, 0, the_index)
 		except:
 			window.show_quick_panel(color_schemes, on_done)
 
