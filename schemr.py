@@ -196,6 +196,19 @@ class Schemr():
 	def get_favorites(self):
 		return sublime.load_settings('SchemrFavorites.sublime-settings').get('schemr_favorites')
 
+	def filter_scheme_name(self, scheme_path):
+		regex = re.compile('(\ \(SL\))?.tmTheme', re.IGNORECASE)
+		scheme_name = re.sub(regex, '', scheme_path).split('/').pop()
+		return scheme_name
+
+	def find_scheme(self, scheme):
+		scheme_name = self.filter_scheme_name(scheme)
+		scheme_path = sublime.find_resources(scheme_name + '.tmTheme')
+		if len(scheme_path) is not 0:
+			return scheme_path[0]
+		else:
+			return False
+
 Schemr = Schemr()
 
 def plugin_loaded():
@@ -221,21 +234,25 @@ class SchemrListFavoriteSchemesCommand(sublime_plugin.WindowCommand):
 	# depending on whether or not the active scheme is already favorited.
 class SchemrFavoriteCurrentSchemeCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		favorites = Schemr.get_favorites()
-		favorites.append(Schemr.get_scheme())
-		Schemr.set_favorites(favorites)
+		the_scheme = Schemr.find_scheme(Schemr.get_scheme())
+		if the_scheme is not False:
+			favorites = Schemr.get_favorites()
+			favorites.append(the_scheme)
+			Schemr.set_favorites(favorites)
 
 	def is_enabled(self):
-		return Schemr.get_scheme() not in Schemr.get_favorites()
+		return Schemr.find_scheme(Schemr.get_scheme()) not in Schemr.get_favorites()
 
 class SchemrUnfavoriteCurrentSchemeCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		favorites = Schemr.get_favorites()
-		favorites.remove(Schemr.get_scheme())
-		Schemr.set_favorites(favorites)
+		the_scheme = Schemr.find_scheme(Schemr.get_scheme())
+		if the_scheme is not False:
+			favorites = Schemr.get_favorites()
+			favorites.remove(the_scheme)
+			Schemr.set_favorites(favorites)
 
 	def is_enabled(self):
-		return Schemr.get_scheme() in Schemr.get_favorites()
+		return Schemr.find_scheme(Schemr.get_scheme()) in Schemr.get_favorites()
 
 	# Cycles the full list of schemes that are available
 	# regardless of whether or not they are favorited.
