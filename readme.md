@@ -65,6 +65,10 @@ The brightness theshold setting allows you to define where the cutoff occurs bet
 
 The brightness flags setting allows you to disable the "[Dark]" or "[Light]" text that appears after the scheme name in the quick panel. Disabling this will turn off colour scheme parsing entirely and may increase performance if you have a large number of schemes.
 
+`schemr_preview_selection`: Boolean true|false. Defaults to true.
+
+If you are using Sublime Text 3, you can enable/disable previewing the highlighted colour scheme as you move up/down through the list if you don't like the preview functionality or experience performance issues.
+
 # Note about [SublimeLinter](https://sublime.wbond.net/packages/SublimeLinter)
 
 To improve the user experience, Schemr filters schemes that contain `(SL)` from being listed or activated with Schemr commands. These schemes can still be enabled manually through the application menu or user settings file.
