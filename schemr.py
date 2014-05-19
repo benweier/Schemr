@@ -15,6 +15,7 @@ class Schemr():
 		# or not it is favorited (True or False).
 	def load_schemes(self):
 		all_scheme_paths = []
+		favorite_scheme_paths = self.get_favorites()
 
 		try: # use find_resources() first for ST3
 			all_scheme_paths = sublime.find_resources('*.tmTheme')
@@ -42,8 +43,11 @@ class Schemr():
 		# the pretty-printed name and whether or not it's been favorited.
 		all_schemes = []
 		for scheme_path in all_scheme_paths:
+			favorite = ''
 			pretty_name = self.filter_scheme_name(scheme_path)
-			all_schemes.append([pretty_name, scheme_path])
+			favorited = scheme_path in favorite_scheme_paths
+			if favorited: favorite = u' \N{BLACK STAR}' # Put a pretty star icon next to favorited schemes. :)
+			all_schemes.append([pretty_name, scheme_path, favorite])
 
 		all_schemes.sort(key=lambda s: s[0].lower())
 		return all_schemes
@@ -56,13 +60,12 @@ class Schemr():
 		# common listing functionality.
 	def list_schemes(self, window, schemes):
 		# Get the user-defined settings or return default values
-		self.schemr_brightness_theshold = self.preferences.get('schemr_brightness_theshold', 100)
-		self.schemr_brightness_flags = self.preferences.get('schemr_brightness_flags', True)
-		self.schemr_preview_selection = self.preferences.get('schemr_preview_selection', True)
+		schemr_brightness_theshold = self.preferences.get('schemr_brightness_theshold', 100)
+		schemr_brightness_flags = self.preferences.get('schemr_brightness_flags', True)
+		schemr_preview_selection = self.preferences.get('schemr_preview_selection', True)
 
 		the_scheme_path = self.get_scheme()
 		the_scheme_name = self.filter_scheme_name(the_scheme_path)
-		favorite_scheme_paths = self.get_favorites()
 
 		# If the active scheme isn't part of the supplied pool (the schemes variable),
 		# then we can't skip the selection to that point and the best we can do is
@@ -76,21 +79,20 @@ class Schemr():
 			flag = ''
 			# # Add scheme brightness flags if the luminance is above or below
 			# a certain theshold and the user has not disabled it
-			if self.schemr_brightness_flags:
+			if schemr_brightness_flags:
 				# Get the RGB value of the scheme background and convert to luminance value
-				rgb = parse_scheme(scheme[1])
+				rgb = self.parse_scheme(scheme[1])
 				luminance = (0.2126 * rgb[0]) + (0.7152 * rgb[1]) + (0.0722 * rgb[2])
-				if luminance < self.schemr_brightness_theshold:
+				if luminance < schemr_brightness_theshold:
 					flag += '   [Dark]'
 				else:
 					flag += '   [Light]'
-			favorited = scheme_path[1] in favorite_scheme_paths
-			if favorited: flag += u' \N{BLACK STAR}' # Put a pretty star icon next to favorited schemes. :)
+			scheme.append(flag)
 
 		# In listing a scheme, whether or not it is favorited is never considered.
 		# Since that information is never used, it is filtered out here for convenience
 		# in passing the array to window.show_quick_panel().
-		color_schemes = [[scheme[0] + scheme[3], scheme[1]] for scheme in schemes]
+		color_schemes = [[scheme[0] + scheme[3] + scheme[2], scheme[1]] for scheme in schemes]
 
 		def on_done(index):
 			if index != -1:
@@ -146,7 +148,7 @@ class Schemr():
 	# Parse the scheme file for the background colour and return the RGB values
 	# in order to determine if the scheme is Dark or Light. Use load_resources()
 	# first for ST3 or fallback to the absolute path for ST2.
-	def parse_scheme(scheme):
+	def parse_scheme(self, scheme):
 		if int(sublime.version()) >= 3000:
 			xml = sublime.load_resource(scheme)
 			try:
