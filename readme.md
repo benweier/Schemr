@@ -57,7 +57,7 @@ Install Schemr through [Package Control](https://sublime.wbond.net/), or downloa
 # User Settings
 There are two settings available to control some of Schemr's behaviour. Add them to `Preferences.sublime-settings` if you wish to override the default value.
 
-`schemr_brightness_threshold`: Integer 0-255. Defaults to 120.
+`schemr_brightness_threshold`: Integer 0-255. Defaults to 100.
 
 The brightness theshold setting allows you to define where the cutoff occurs between Dark and Light themes. Higher values indicate increasing brightess approaching white rgb(255, 255, 255), while lower values indicate decreasing brightess approaching black rgb(0, 0, 0).
 
