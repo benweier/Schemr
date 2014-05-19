@@ -55,7 +55,7 @@ Install Schemr through [Package Control](https://sublime.wbond.net/), or downloa
 * Default binding: <kbd>Alt+Shift+F10</kbd> (Windows/Linux) <kbd>Option+Shift+F10</kbd> (OSX)
 
 # User Settings
-There are two settings available to control some of Schemr's behaviour. Add them to `Preferences.sublime-settings` if you wish to override the default value.
+These settings are available to control some of Schemr's behaviour. Add them to `Preferences.sublime-settings` if you wish to override the default value.
 
 `schemr_brightness_threshold`: Integer 0-255. Defaults to 100.
 
