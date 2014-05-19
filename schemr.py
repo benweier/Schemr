@@ -14,51 +14,7 @@ class Schemr():
 		# that contains, in order, (1) its pretty-printed name, (2) its path and (3) whether
 		# or not it is favorited (True or False).
 	def load_schemes(self):
-		# Get the user-defined settings or return default values
-		p = sublime.load_settings('Preferences.sublime-settings')
-		self.schemr_brightness_theshold = p.get('schemr_brightness_theshold', 100)
-		self.schemr_brightness_flags = p.get('schemr_brightness_flags', True)
-		self.schemr_preview_selection = p.get('schemr_preview_selection', True)
-
 		all_scheme_paths = []
-		favorite_scheme_paths = self.get_favorites()
-
-		# Parse the scheme file for the background colour and return the RGB values
-		# in order to determine if the scheme is Dark or Light. Use load_resources()
-		# first for ST3 or fallback to the absolute path for ST2.
-		def parse_scheme(scheme):
-			if (int(sublime.version()) >= 3000):
-				xml = sublime.load_resource(scheme)
-				try:
-					plist = parser.parse_string(xml)
-				except (parser.PropertyListParseError):
-					print('Error parsing ' + scheme)
-					return (0, 0, 0)
-			else:
-				xml = os.path.join(sublime.packages_path(), scheme.replace('Packages/', ''))
-				try:
-					plist = parser.parse_file(xml)
-				except (parser.PropertyListParseError):
-					print('Error parsing ' + scheme)
-					return (0, 0, 0)
-
-			try:
-				background_colour = plist['settings'][0]['settings']['background'].lstrip('#')
-			except (KeyError): # tmTheme is missing a background colour
-				return (0, 0, 0)
-
-			if len(background_colour) is 3:
-				# Shorthand value, e.g. #111
-				# Repeat the values for correct base 16 conversion
-				r, g, b = background_colour[:1] + background_colour[:1], background_colour[1:2] + background_colour[1:2], background_colour[2:] + background_colour[2:]
-			else:
-				# Full-length colour value, e.g. #111111 or #FFEEEEEE
-				# Here we assume the order of hex values is #AARRGGBB
-				# and so work backwards from the end of the string.
-				r, g, b = background_colour[-6:-4], background_colour[-4:-2], background_colour[-2:]
-
-			r, g, b = [int(n, 16) for n in (r, g, b)]
-			return (r, g, b)
 
 		try: # use find_resources() first for ST3
 			all_scheme_paths = sublime.find_resources('*.tmTheme')
@@ -86,21 +42,8 @@ class Schemr():
 		# the pretty-printed name and whether or not it's been favorited.
 		all_schemes = []
 		for scheme_path in all_scheme_paths:
-			pretty_name = scheme_path.split('/').pop().replace('.tmTheme', '')
-			flag = ''
-			# Add scheme brightness flags to the quick panel if the luminance is above
-			# or below a certain theshold and the user has not disabled it
-			if self.schemr_brightness_flags:
-				# Get the RGB value of the scheme background and convert to luminance value
-				rgb = parse_scheme(scheme_path)
-				luminance = (0.2126 * rgb[0]) + (0.7152 * rgb[1]) + (0.0722 * rgb[2])
-				if luminance < self.schemr_brightness_theshold:
-					flag += '   [Dark]'
-				else:
-					flag += '   [Light]'
-			favorited = scheme_path in favorite_scheme_paths
-			if favorited: flag += u' \N{BLACK STAR}' # Put a pretty star icon next to favorited schemes. :)
-			all_schemes.append([pretty_name, scheme_path, favorited, flag])
+			pretty_name = self.filter_scheme_name(scheme_path)
+			all_schemes.append([pretty_name, scheme_path])
 
 		all_schemes.sort(key=lambda s: s[0].lower())
 		return all_schemes
@@ -112,8 +55,14 @@ class Schemr():
 		# underlying schemes that they operate on.  This method exists to provide that
 		# common listing functionality.
 	def list_schemes(self, window, schemes):
+		# Get the user-defined settings or return default values
+		self.schemr_brightness_theshold = self.preferences.get('schemr_brightness_theshold', 100)
+		self.schemr_brightness_flags = self.preferences.get('schemr_brightness_flags', True)
+		self.schemr_preview_selection = self.preferences.get('schemr_preview_selection', True)
+
 		the_scheme_path = self.get_scheme()
 		the_scheme_name = self.filter_scheme_name(the_scheme_path)
+		favorite_scheme_paths = self.get_favorites()
 
 		# If the active scheme isn't part of the supplied pool (the schemes variable),
 		# then we can't skip the selection to that point and the best we can do is
@@ -122,6 +71,21 @@ class Schemr():
 			the_index = [scheme[0] for scheme in schemes].index(the_scheme_name)
 		except (ValueError):
 			the_index = 0
+
+		for scheme in schemes:
+			flag = ''
+			# # Add scheme brightness flags if the luminance is above or below
+			# a certain theshold and the user has not disabled it
+			if self.schemr_brightness_flags:
+				# Get the RGB value of the scheme background and convert to luminance value
+				rgb = parse_scheme(scheme[1])
+				luminance = (0.2126 * rgb[0]) + (0.7152 * rgb[1]) + (0.0722 * rgb[2])
+				if luminance < self.schemr_brightness_theshold:
+					flag += '   [Dark]'
+				else:
+					flag += '   [Light]'
+			favorited = scheme_path[1] in favorite_scheme_paths
+			if favorited: flag += u' \N{BLACK STAR}' # Put a pretty star icon next to favorited schemes. :)
 
 		# In listing a scheme, whether or not it is favorited is never considered.
 		# Since that information is never used, it is filtered out here for convenience
@@ -179,6 +143,43 @@ class Schemr():
 		self.set_scheme(schemes[index][1])
 		sublime.status_message(schemes[index][0])
 
+	# Parse the scheme file for the background colour and return the RGB values
+	# in order to determine if the scheme is Dark or Light. Use load_resources()
+	# first for ST3 or fallback to the absolute path for ST2.
+	def parse_scheme(scheme):
+		if int(sublime.version()) >= 3000:
+			xml = sublime.load_resource(scheme)
+			try:
+				plist = parser.parse_string(xml)
+			except (parser.PropertyListParseError):
+				print('Error parsing ' + scheme)
+				return (0, 0, 0)
+		else:
+			xml = os.path.join(sublime.packages_path(), scheme.replace('Packages/', ''))
+			try:
+				plist = parser.parse_file(xml)
+			except (parser.PropertyListParseError):
+				print('Error parsing ' + scheme)
+				return (0, 0, 0)
+
+		try:
+			background_colour = plist['settings'][0]['settings']['background'].lstrip('#')
+		except (KeyError): # tmTheme is missing a background colour
+			return (0, 0, 0)
+
+		if len(background_colour) is 3:
+			# Shorthand value, e.g. #111
+			# Repeat the values for correct base 16 conversion
+			r, g, b = background_colour[:1] + background_colour[:1], background_colour[1:2] + background_colour[1:2], background_colour[2:] + background_colour[2:]
+		else:
+			# Full-length colour value, e.g. #111111 or #FFEEEEEE
+			# Here we assume the order of hex values is #AARRGGBB
+			# and so work backwards from the end of the string.
+			r, g, b = background_colour[-6:-4], background_colour[-4:-2], background_colour[-2:]
+
+		r, g, b = [int(n, 16) for n in (r, g, b)]
+		return (r, g, b)
+
 	def set_scheme(self, scheme):
 		sublime.load_settings('Preferences.sublime-settings').set('color_scheme', scheme)
 		sublime.save_settings('Preferences.sublime-settings')
@@ -209,7 +210,11 @@ class Schemr():
 Schemr = Schemr()
 
 def plugin_loaded():
+	Schemr.preferences = sublime.load_settings('Preferences.sublime-settings')
 	print('schemr ready')
+
+if int(sublime.version()) < 3000:
+	plugin_loaded()
 
 	# Display the full list of schemes available, regardless
 	# of whether or not they are favorited
