@@ -46,7 +46,7 @@ class Schemr():
 			scheme_name = self.filter_scheme_name(scheme_path)
 			favorite = ''
 			is_favorited = scheme_path in favorite_scheme_paths
-			if is_favorited: favorite = u' \N{BLACK STAR}' # Put a pretty star icon next to favorited schemes. :)
+			if is_favorited: favorite = u'   \N{BLACK STAR}' # Put a pretty star icon next to favorited schemes. :)
 			all_schemes.append([scheme_name, scheme_path, favorite])
 
 		all_schemes.sort(key=lambda s: s[0].lower())
@@ -97,7 +97,7 @@ class Schemr():
 		def on_done(index):
 			if index != -1:
 				self.set_scheme(color_schemes[index][1])
-				sublime.status_message(color_schemes[index][0])
+				sublime.status_message('Scheme: ' + self.filter_scheme_name(color_schemes[index][1]))
 
 			if index == -1:
 				self.set_scheme(the_scheme_path)
@@ -113,7 +113,7 @@ class Schemr():
 				self.user_selected = True
 
 		try: # Attempt to enable preview-on-selection (only supported by Sublime Text 3).
-			if self.schemr_preview_selection is True:
+			if schemr_preview_selection is True:
 				window.show_quick_panel(color_schemes, on_done, 0, the_index, on_select)
 			else:
 				window.show_quick_panel(color_schemes, on_done, 0, the_index)
@@ -143,7 +143,7 @@ class Schemr():
 			index = int(random() * len(schemes))
 
 		self.set_scheme(schemes[index][1])
-		sublime.status_message(schemes[index][0])
+		sublime.status_message('Scheme: ' + self.filter_scheme_name(schemes[index][1]))
 
 	# Parse the scheme file for the background colour and return the RGB values
 	# in order to determine if the scheme is Dark or Light. Use load_resources()
