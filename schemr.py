@@ -43,11 +43,11 @@ class Schemr():
 		# the pretty-printed name and whether or not it's been favorited.
 		all_schemes = []
 		for scheme_path in all_scheme_paths:
+			scheme_name = self.filter_scheme_name(scheme_path)
 			favorite = ''
-			pretty_name = self.filter_scheme_name(scheme_path)
-			favorited = scheme_path in favorite_scheme_paths
-			if favorited: favorite = u' \N{BLACK STAR}' # Put a pretty star icon next to favorited schemes. :)
-			all_schemes.append([pretty_name, scheme_path, favorite])
+			is_favorited = scheme_path in favorite_scheme_paths
+			if is_favorited: favorite = u' \N{BLACK STAR}' # Put a pretty star icon next to favorited schemes. :)
+			all_schemes.append([scheme_name, scheme_path, favorite])
 
 		all_schemes.sort(key=lambda s: s[0].lower())
 		return all_schemes
