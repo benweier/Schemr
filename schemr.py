@@ -46,7 +46,7 @@ class Schemr():
 			scheme_name = self.filter_scheme_name(scheme_path)
 			favorite = ''
 			is_favorited = scheme_path in favorite_scheme_paths
-			if is_favorited: favorite = u'   \N{BLACK STAR}' # Put a pretty star icon next to favorited schemes. :)
+			if is_favorited: favorite = u'   \u2605' # Put a pretty star icon next to favorited schemes. :)
 			all_schemes.append([scheme_name, scheme_path, favorite])
 
 		all_schemes.sort(key=lambda s: s[0].lower())
