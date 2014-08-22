@@ -199,10 +199,10 @@ class Schemr():
 		return scheme_name
 
 	def find_scheme(self, scheme_path):
-		scheme_name = self.filter_scheme_name(scheme_path)
-		scheme_path = sublime.find_resources(scheme_name + '.tmTheme')
-		if len(scheme_path) is not 0:
-			return scheme_path[0]
+		scheme_path = self.filter_scheme_name(scheme_path) + '.tmTheme'
+		matching_paths = [path for name, path, favorited in self.load_schemes() if path == scheme_path]
+		if len(matching_paths) is not 0:
+			return matching_paths[0]
 		else:
 			return False
 
