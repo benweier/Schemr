@@ -46,7 +46,7 @@ class Schemr():
 			scheme_name = self.filter_scheme_name(scheme_path)
 			favorite = ''
 			is_favorited = scheme_path in favorite_scheme_paths
-			if is_favorited: favorite = u'   \N{BLACK STAR}' # Put a pretty star icon next to favorited schemes. :)
+			if is_favorited: favorite = u'   \u2605' # Put a pretty star icon next to favorited schemes. :)
 			all_schemes.append([scheme_name, scheme_path, favorite])
 
 		all_schemes.sort(key=lambda s: s[0].lower())
@@ -199,8 +199,8 @@ class Schemr():
 		return scheme_name
 
 	def find_scheme(self, scheme_path):
-		scheme_path = self.filter_scheme_name(scheme_path) + '.tmTheme'
-		matching_paths = [path for name, path, favorited in self.load_schemes() if path == scheme_path]
+		scheme_name = self.filter_scheme_name(scheme_path)
+		matching_paths = [path for name, path, favorited in self.load_schemes() if name == scheme_name]
 		if len(matching_paths) is not 0:
 			return matching_paths[0]
 		else:
