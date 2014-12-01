@@ -1,4 +1,5 @@
 # About
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/benweier/Schemr?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Schemr allows you to quickly change your color scheme using the command palette and keyboard shortcuts. With Schemr, you get commands to easily cycle forward, backward and randomly through your available color schemes.
 
 # Features
