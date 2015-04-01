@@ -147,7 +147,11 @@ class Schemr():
 	# first for ST3 or fallback to the absolute path for ST2.
 	def parse_scheme(self, scheme_path):
 		if int(sublime.version()) >= 3000:
-			xml = sublime.load_resource(scheme_path)
+			try:
+				xml = sublime.load_resource(scheme_path)
+			except:
+				print('Error loading ' + scheme_path)
+				return (0, 0, 0)
 			try:
 				plist = parser.parse_string(xml)
 			except (parser.PropertyListParseError):
