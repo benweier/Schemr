@@ -240,7 +240,7 @@ class SchemrListSchemesCommand(sublime_plugin.WindowCommand):
 	# Only available if there are favorites to display.
 class SchemrListFavoriteSchemesCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		Schemr.instance().list_schemes(self.window, [scheme for scheme in Schemr.instance().load_schemes() if scheme[2]])
+		Schemr.instance().list_schemes(self.window, [scheme for scheme in Schemr.instance().load_schemes() if scheme[2]], Schemr.instance().favorites)
 
 	def is_enabled(self):
 		return len(Schemr.instance().get_favorites()) > 0
