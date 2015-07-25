@@ -18,7 +18,6 @@
         "command": "schemr_cycle_schemes",
         "args": {"direction": "rand"}
     },
-    
     {
         "caption": "Schemr: List favorite schemes",
         "command": "schemr_list_favorite_schemes"
@@ -45,5 +44,13 @@
     {
         "caption": "Schemr: Remove current scheme from favorites",
         "command": "schemr_unfavorite_current_scheme"
+    },
+    {
+        "caption": "Schemr: Set scheme for current syntax",
+        "command": "schemr_set_syntax_scheme"
+    },
+    {
+        "caption": "Schemr: Reset scheme for current syntax",
+        "command": "schemr_reset_syntax_scheme"
     }
 ]
