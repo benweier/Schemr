@@ -123,7 +123,7 @@ class Schemr(object):
 		# versions of Sublime Text. This prevents the color scheme from 'flickering'
 		# from one scheme to another as the panel jumps to the active selection.
 		self.user_selected = False
-		def on_select(index):
+		def on_highlight(index):
 			if self.user_selected is True:
 				self.set_scheme(color_schemes[index][1])
 			else:
@@ -131,11 +131,18 @@ class Schemr(object):
 
 		try: # Attempt to enable preview-on-selection (only supported by Sublime Text 3).
 			if schemr_preview_selection is True:
-				window.show_quick_panel(color_schemes, on_done, 0, the_index, on_select)
+				window.show_quick_panel(color_schemes, lambda index: self.select_scheme(index, the_scheme_path, color_schemes), 0, the_index, on_highlight)
 			else:
-				window.show_quick_panel(color_schemes, on_done, 0, the_index)
+				window.show_quick_panel(color_schemes, lambda index: self.select_scheme(index, the_scheme_path, color_schemes), 0, the_index)
 		except:
-			window.show_quick_panel(color_schemes, on_done)
+			window.show_quick_panel(color_schemes, lambda index: self.select_scheme(index, the_scheme_path, color_schemes))
+
+	def select_scheme(self, index, the_scheme_path, color_schemes):
+		if index is -1:
+			self.set_scheme(the_scheme_path)
+		else:
+			self.set_scheme(color_schemes[index][1])
+			sublime.status_message('Scheme: ' + self.filter_scheme_name(color_schemes[index][1]))
 
 		# Cycles the scheme in the given direction ("next", "prev" or "rand").
 	def cycle_schemes(self, schemes, direction):
