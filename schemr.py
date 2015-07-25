@@ -2,9 +2,6 @@ import sublime, sublime_plugin
 import sys, os, re, zipfile
 from random import random
 
-PREFERENCES = 'Preferences.sublime-settings'
-FAVORITES = 'SchemrFavorites.sublime-settings'
-
 is_ST2 = int(sublime.version()) < 3000
 
 if not is_ST2:
@@ -24,8 +21,8 @@ class Schemr(object):
 		return cls._instance
 
 	def __init__(self):
-		self.preferences = sublime.load_settings(PREFERENCES)
-		self.favorites = sublime.load_settings(FAVORITES)
+		self.preferences = dict(filename = 'Preferences.sublime-settings', data = sublime.load_settings('Preferences.sublime-settings'))
+		self.favorites = dict(filename = 'SchemrFavorites.sublime-settings', data = sublime.load_settings('SchemrFavorites.sublime-settings'))
 
 		# Returns a list of all managed schemes.  Each scheme is itself represented by a list
 		# that contains, in order, (1) its pretty-printed name, (2) its path and (3) whether
@@ -75,18 +72,17 @@ class Schemr(object):
 		# "List favorite schemes" commands function exactly the same except for the
 		# underlying schemes that they operate on.  This method exists to provide that
 		# common listing functionality.
-	def list_schemes(self, window, schemes):
+	def list_schemes(self, window, schemes, preferences):
 		# Get the user-defined settings or return default values.
-		schemr_brightness_theshold = self.preferences.get('schemr_brightness_theshold', 100)
-		schemr_brightness_flags = self.preferences.get('schemr_brightness_flags', True)
-		schemr_preview_selection = self.preferences.get('schemr_preview_selection', True)
+		schemr_brightness_theshold = self.preferences.get('data').get('schemr_brightness_theshold', 100)
+		schemr_brightness_flags = self.preferences.get('data').get('schemr_brightness_flags', True)
+		schemr_preview_selection = self.preferences.get('data').get('schemr_preview_selection', True)
 
-		the_scheme_path = self.get_scheme()
+		the_scheme_path = self.get_scheme(preferences)
 		the_scheme_name = self.filter_scheme_name(the_scheme_path)
 
-		# If the active scheme isn't part of the supplied pool (the schemes variable),
-		# then we can't skip the selection to that point and the best we can do is
-		# start from the top of the list.
+		# If the active scheme isn't part of the scheme list, then we can't skip the
+		# selection to that point and the best we can do is start from the top of the list.
 		try:
 			the_index = [scheme[0] for scheme in schemes].index(the_scheme_name)
 		except (ValueError):
@@ -112,41 +108,34 @@ class Schemr(object):
 		else:
 			color_schemes = [[scheme[0] + scheme[2], scheme[1]] for scheme in schemes]
 
-		def on_done(index):
-			if index is -1:
-				self.set_scheme(the_scheme_path)
-			else:
-				self.set_scheme(color_schemes[index][1])
-				sublime.status_message('Scheme: ' + self.filter_scheme_name(color_schemes[index][1]))
-
 		# Set a selection flag to detect when the panel is first opened in some
 		# versions of Sublime Text. This prevents the color scheme from 'flickering'
 		# from one scheme to another as the panel jumps to the active selection.
 		self.user_selected = False
 		def on_highlight(index):
 			if self.user_selected is True:
-				self.set_scheme(color_schemes[index][1])
+				self.set_scheme(color_schemes[index][1], self.preferences)
 			else:
 				self.user_selected = True
 
 		try: # Attempt to enable preview-on-selection (only supported by Sublime Text 3).
 			if schemr_preview_selection is True:
-				window.show_quick_panel(color_schemes, lambda index: self.select_scheme(index, the_scheme_path, color_schemes), 0, the_index, on_highlight)
+				window.show_quick_panel(color_schemes, lambda index: self.select_scheme(index, the_scheme_path, color_schemes, preferences), 0, the_index, on_highlight)
 			else:
-				window.show_quick_panel(color_schemes, lambda index: self.select_scheme(index, the_scheme_path, color_schemes), 0, the_index)
+				window.show_quick_panel(color_schemes, lambda index: self.select_scheme(index, the_scheme_path, color_schemes, preferences), 0, the_index)
 		except:
-			window.show_quick_panel(color_schemes, lambda index: self.select_scheme(index, the_scheme_path, color_schemes))
+			window.show_quick_panel(color_schemes, lambda index: self.select_scheme(index, the_scheme_path, color_schemes, preferences))
 
-	def select_scheme(self, index, the_scheme_path, color_schemes):
+	def select_scheme(self, index, the_scheme_path, color_schemes, preferences):
 		if index is -1:
-			self.set_scheme(the_scheme_path)
+			self.set_scheme(the_scheme_path, preferences)
 		else:
-			self.set_scheme(color_schemes[index][1])
+			self.set_scheme(color_schemes[index][1], preferences)
 			sublime.status_message('Scheme: ' + self.filter_scheme_name(color_schemes[index][1]))
 
 		# Cycles the scheme in the given direction ("next", "prev" or "rand").
 	def cycle_schemes(self, schemes, direction):
-		the_scheme_name = self.filter_scheme_name(self.get_scheme())
+		the_scheme_name = self.filter_scheme_name(self.get_scheme(Schemr.instance().preferences))
 		num_of_schemes = len(schemes)
 
 		# Try to find the current scheme path in the available schemes otherwise
@@ -166,7 +155,7 @@ class Schemr(object):
 		if direction == 'rand':
 			index = int(random() * len(schemes))
 
-		self.set_scheme(schemes[index][1])
+		self.set_scheme(schemes[index][1], self.preferences)
 		sublime.status_message('Scheme: ' + self.filter_scheme_name(schemes[index][1]))
 
 		# Parse the scheme file for the background color and return the RGB values
@@ -210,19 +199,19 @@ class Schemr(object):
 		r, g, b = [int(n, 16) for n in (r, g, b)]
 		return (r, g, b)
 
-	def set_scheme(self, scheme):
-		self.preferences.set('color_scheme', scheme)
-		sublime.save_settings(PREFERENCES)
+	def set_scheme(self, scheme, preferences):
+		preferences.get('data').set('color_scheme', scheme)
+		sublime.save_settings(preferences.get('filename'))
 
-	def get_scheme(self):
-		return self.preferences.get('color_scheme')
+	def get_scheme(self, preferences):
+		return preferences.get('data').get('color_scheme', self.preferences.get('data').get('color_scheme'))
 
 	def set_favorites(self, schemes):
-		self.favorites.set('schemr_favorites', schemes)
-		sublime.save_settings(FAVORITES)
+		self.favorites.get('data').set('schemr_favorites', schemes)
+		sublime.save_settings(self.favorites.get('filename'))
 
 	def get_favorites(self):
-		return self.favorites.get('schemr_favorites')
+		return self.favorites.get('data').get('schemr_favorites')
 
 	def filter_scheme_name(self, scheme_path):
 		regex = re.compile('(\ \(SL\))|(\ Color\ Highlighter)?.tmTheme', re.IGNORECASE)
@@ -245,7 +234,7 @@ def plugin_loaded():
 	# of whether or not they are favorited.
 class SchemrListSchemesCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		Schemr.instance().list_schemes(self.window, Schemr.instance().load_schemes())
+		Schemr.instance().list_schemes(self.window, Schemr.instance().load_schemes(), Schemr.instance().preferences)
 
 	# Display the list of schemes that have been favorited.
 	# Only available if there are favorites to display.
@@ -261,25 +250,25 @@ class SchemrListFavoriteSchemesCommand(sublime_plugin.WindowCommand):
 	# depending on whether or not the active scheme is already favorited.
 class SchemrFavoriteCurrentSchemeCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		the_scheme = Schemr.instance().find_scheme(Schemr.instance().get_scheme())
+		the_scheme = Schemr.instance().find_scheme(Schemr.instance().get_scheme(Schemr.instance().preferences))
 		if the_scheme is not False:
 			favorites = Schemr.instance().get_favorites()
 			favorites.append(the_scheme)
 			Schemr.instance().set_favorites(favorites)
 
 	def is_enabled(self):
-		return Schemr.instance().find_scheme(Schemr.instance().get_scheme()) not in Schemr.instance().get_favorites()
+		return Schemr.instance().find_scheme(Schemr.instance().get_scheme(Schemr.instance().preferences)) not in Schemr.instance().get_favorites()
 
 class SchemrUnfavoriteCurrentSchemeCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		the_scheme = Schemr.instance().find_scheme(Schemr.instance().get_scheme())
+		the_scheme = Schemr.instance().find_scheme(Schemr.instance().get_scheme(Schemr.instance().preferences))
 		if the_scheme is not False:
 			favorites = Schemr.instance().get_favorites()
 			favorites.remove(the_scheme)
 			Schemr.instance().set_favorites(favorites)
 
 	def is_enabled(self):
-		return Schemr.instance().find_scheme(Schemr.instance().get_scheme()) in Schemr.instance().get_favorites()
+		return Schemr.instance().find_scheme(Schemr.instance().get_scheme(Schemr.instance().preferences)) in Schemr.instance().get_favorites()
 
 	# Cycles the full list of schemes that are available
 	# regardless of whether or not they are favorited.
@@ -298,27 +287,25 @@ class SchemrCycleFavoriteSchemesCommand(sublime_plugin.WindowCommand):
 
 class SchemrSetSyntaxSchemeCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
-		the_scheme = Schemr.instance().get_scheme()
 		syntax_path = self.view.settings().get('syntax')
-		syntax_preferences = os.path.splitext(os.path.basename(syntax_path))[0] + '.sublime-settings'
+		syntax_file = os.path.splitext(os.path.basename(syntax_path))[0] + '.sublime-settings'
+		preferences = dict(filename = syntax_file, data = sublime.load_settings(syntax_file))
 
-		sublime.load_settings(syntax_preferences).set('color_scheme', the_scheme)
-		sublime.save_settings(syntax_preferences)
+		Schemr.instance().list_schemes(self.view.window(), Schemr.instance().load_schemes(), preferences)
 
 class SchemrResetSyntaxSchemeCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
 		syntax_path = self.view.settings().get('syntax')
-		syntax_preferences = os.path.splitext(os.path.basename(syntax_path))[0] + '.sublime-settings'
+		syntax_file = os.path.splitext(os.path.basename(syntax_path))[0] + '.sublime-settings'
 
-		sublime.load_settings(syntax_preferences).erase('color_scheme')
-		sublime.save_settings(syntax_preferences)
+		sublime.load_settings(syntax_file).erase('color_scheme')
+		sublime.save_settings(syntax_file)
 
 	def is_enabled(self):
 		syntax_path = self.view.settings().get('syntax')
-		syntax_name = os.path.splitext(os.path.basename(syntax_path))[0]
-		syntax_preferences = syntax_name + '.sublime-settings'
+		syntax_file = os.path.splitext(os.path.basename(syntax_path))[0] + '.sublime-settings'
 
-		return sublime.load_settings(syntax_preferences).has('color_scheme')
+		return sublime.load_settings(syntax_file).has('color_scheme')
 
 	# These commands are provided for backwards-compatibility.
 	# SchemrCycleSchemeCommand should be used instead.
