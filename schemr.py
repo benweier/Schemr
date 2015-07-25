@@ -289,6 +289,30 @@ class SchemrCycleFavoriteSchemesCommand(sublime_plugin.WindowCommand):
 	def is_enabled(self):
 		return len(Schemr.instance().get_favorites()) > 1
 
+class SchemrSetSyntaxSchemeCommand(sublime_plugin.TextCommand):
+	def run(self, edit):
+		the_scheme = Schemr.instance().get_scheme()
+		syntax_path = self.view.settings().get('syntax')
+		syntax_preferences = os.path.splitext(os.path.basename(syntax_path))[0] + '.sublime-settings'
+
+		sublime.load_settings(syntax_preferences).set('color_scheme', the_scheme)
+		sublime.save_settings(syntax_preferences)
+
+class SchemrResetSyntaxSchemeCommand(sublime_plugin.TextCommand):
+	def run(self, edit):
+		syntax_path = self.view.settings().get('syntax')
+		syntax_preferences = os.path.splitext(os.path.basename(syntax_path))[0] + '.sublime-settings'
+
+		sublime.load_settings(syntax_preferences).erase('color_scheme')
+		sublime.save_settings(syntax_preferences)
+
+	def is_enabled(self):
+		syntax_path = self.view.settings().get('syntax')
+		syntax_name = os.path.splitext(os.path.basename(syntax_path))[0]
+		syntax_preferences = syntax_name + '.sublime-settings'
+
+		return sublime.load_settings(syntax_preferences).has('color_scheme')
+
 	# These commands are provided for backwards-compatibility.
 	# SchemrCycleSchemeCommand should be used instead.
 class SchemrNextSchemeCommand(sublime_plugin.WindowCommand):
