@@ -114,7 +114,8 @@ class Schemr(object):
 		self.user_selected = False
 		def on_highlight(index):
 			if self.user_selected is True:
-				self.set_scheme(color_schemes[index][1], self.preferences)
+				#  DUBEG: use current settings instead of defaulting to User Settings.
+				self.set_scheme(color_schemes[index][1], preferences)
 			else:
 				self.user_selected = True
 
@@ -131,6 +132,8 @@ class Schemr(object):
 			self.set_scheme(the_scheme_path, preferences)
 		else:
 			self.set_scheme(color_schemes[index][1], preferences)
+			# DUBEG: user accepted the scheme, its ok to save it.
+			sublime.save_settings(preferences.get('filename'))
 			sublime.status_message('Scheme: ' + self.filter_scheme_name(color_schemes[index][1]))
 
 		# Cycles the scheme in the given direction ("next", "prev" or "rand").
@@ -156,6 +159,8 @@ class Schemr(object):
 			index = int(random() * len(schemes))
 
 		self.set_scheme(schemes[index][1], self.preferences)
+		# DUBEG: save to disk here, because set_scheme doesnt save automatically anymore.
+		sublime.save_settings(preferences.get('filename'))
 		sublime.status_message('Scheme: ' + self.filter_scheme_name(schemes[index][1]))
 
 		# Parse the scheme file for the background color and return the RGB values
@@ -199,9 +204,12 @@ class Schemr(object):
 		r, g, b = [int(n, 16) for n in (r, g, b)]
 		return (r, g, b)
 
+
+
 	def set_scheme(self, scheme, preferences):
 		preferences.get('data').set('color_scheme', scheme)
-		sublime.save_settings(preferences.get('filename'))
+		# DUBEG: do not save the scheme before the user accept it.
+		# sublime.save_settings(preferences.get('filename'))
 
 	def get_scheme(self, preferences):
 		return preferences.get('data').get('color_scheme', self.preferences.get('data').get('color_scheme'))
@@ -290,7 +298,6 @@ class SchemrSetSyntaxSchemeCommand(sublime_plugin.TextCommand):
 		syntax_path = self.view.settings().get('syntax')
 		syntax_file = os.path.splitext(os.path.basename(syntax_path))[0] + '.sublime-settings'
 		preferences = dict(filename = syntax_file, data = sublime.load_settings(syntax_file))
-
 		Schemr.instance().list_schemes(self.view.window(), Schemr.instance().load_schemes(), preferences)
 
 class SchemrResetSyntaxSchemeCommand(sublime_plugin.TextCommand):
