@@ -114,7 +114,7 @@ class Schemr(object):
 		self.user_selected = False
 		def on_highlight(index):
 			if self.user_selected is True:
-				self.set_scheme(color_schemes[index][1], self.preferences)
+				self.set_scheme(color_schemes[index][1], preferences)
 			else:
 				self.user_selected = True
 
@@ -128,14 +128,21 @@ class Schemr(object):
 
 	def select_scheme(self, index, the_scheme_path, color_schemes, preferences):
 		if index is -1:
-			self.set_scheme(the_scheme_path, preferences)
+			# Restore or erase the original scheme setting.
+			if (the_scheme_path is not ''):
+				self.set_scheme(the_scheme_path, preferences)
+				sublime.save_settings(preferences.get('filename'))
+			else:
+				self.erase_scheme(preferences)
 		else:
+			# Persist the new scheme setting.
 			self.set_scheme(color_schemes[index][1], preferences)
+			sublime.save_settings(preferences.get('filename'))
 			sublime.status_message('Scheme: ' + self.filter_scheme_name(color_schemes[index][1]))
 
 		# Cycles the scheme in the given direction ("next", "prev" or "rand").
 	def cycle_schemes(self, schemes, direction):
-		the_scheme_name = self.filter_scheme_name(self.get_scheme(Schemr.instance().preferences))
+		the_scheme_name = self.filter_scheme_name(self.get_scheme(self.preferences))
 		num_of_schemes = len(schemes)
 
 		# Try to find the current scheme path in the available schemes otherwise
@@ -156,6 +163,7 @@ class Schemr(object):
 			index = int(random() * len(schemes))
 
 		self.set_scheme(schemes[index][1], self.preferences)
+		sublime.save_settings(self.preferences.get('filename'))
 		sublime.status_message('Scheme: ' + self.filter_scheme_name(schemes[index][1]))
 
 		# Parse the scheme file for the background color and return the RGB values
@@ -201,10 +209,12 @@ class Schemr(object):
 
 	def set_scheme(self, scheme, preferences):
 		preferences.get('data').set('color_scheme', scheme)
-		sublime.save_settings(preferences.get('filename'))
 
 	def get_scheme(self, preferences):
-		return preferences.get('data').get('color_scheme', self.preferences.get('data').get('color_scheme'))
+		return preferences.get('data').get('color_scheme', '')
+
+	def erase_scheme(self, preferences):
+		preferences.get('data').erase('color_scheme')
 
 	def set_favorites(self, schemes):
 		self.favorites.get('data').set('schemr_favorites', schemes)
