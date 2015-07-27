@@ -7,12 +7,12 @@ Schemr allows you to quickly change your color scheme using the command palette 
 * Full compatibility with Sublime Text 2 and 3.
 * Preview the selected color scheme as you navigate through the quick panel. [ST3 ONLY]
 * Color schemes can be favorited for even faster access.
-* Set syntax-specific color schemes for your favorite languages. Or your favorite schemes for your favorite languages!
+* Set syntax-specific color schemes for your favorite languages. Use your favorite schemes for your favorite languages!
 * Displays `[Dark]` or `[Light]` in the scheme list to easily filter by type.
 * Automatically loads all available `.tmTheme` files, including those found inside `.sublime-package` files.
 
 # Installation
-Install Schemr through [Package Control](https://sublime.wbond.net/), or download and extract it into your Sublime Text `Packages` folder.
+Install Schemr through [Package Control](https://packagecontrol.io/), or download and extract it into your Sublime Text `Packages` folder.
 
 # Contributors
 * [Max](https://github.com/SyntaxColoring) - Favorites support and code refactoring
@@ -70,7 +70,7 @@ These settings are available to control some of Schemr's behavior. Add them to `
 
 `schemr_brightness_threshold`: Integer 0-255. Defaults to 100.
 
-The brightness theshold setting allows you to define where the cutoff occurs between Dark and Light themes. Higher values indicate increasing brightess approaching white rgb(255, 255, 255), while lower values indicate decreasing brightess approaching black rgb(0, 0, 0).
+The brightness theshold setting allows you to define where the cutoff occurs between Dark and Light themes. Higher values indicate increasing brightess approaching white, while lower values indicate decreasing brightess approaching black.
 
 `schemr_brightness_flags`: Boolean true|false. Defaults to true.
 
@@ -78,10 +78,10 @@ The brightness flags setting allows you to disable the "[Dark]" or "[Light]" tex
 
 `schemr_preview_selection`: Boolean true|false. Defaults to true.
 
-If you are using Sublime Text 3, you can enable/disable previewing the highlighted color scheme as you move up/down through the list if you don't like the preview functionality or experience performance issues.
+If you are using Sublime Text 3, you can enable/disable previewing the highlighted color scheme as you move through the scheme list. Some performance issues related to the SublimeLinter and Color Highlighter plugins may be resolved by disabling this setting.
 
-# Note about [SublimeLinter](https://packagecontrol.io/packages/SublimeLinter) and [Color Highliter](https://packagecontrol.io/packages/Color%20Highlighter)
+# Note about [SublimeLinter](https://packagecontrol.io/packages/SublimeLinter) and [Color Highlighter](https://packagecontrol.io/packages/Color%20Highlighter)
 
 To improve the user experience, Schemr filters schemes that contain `(SL)` or `(Color Highlighter)` from being listed or activated with Schemr commands. These schemes can still be enabled manually through the application menu or user settings file.
 
-If a color scheme does not define colors for the [SublimeLinter](https://packagecontrol.io/packages/SublimeLinter) or [Color Highliter](https://packagecontrol.io/packages/Color%20Highlighter), the scheme file is extended and the written to a file in the `Packages/User` directory. If you switch between a lot of schemes this can quickly pollute the scheme list with many duplicates. Activate the base color scheme through Schemr and SublimeLinter/Color Highlighter will switch to their version automatically.
+If a color scheme does not define colors for the [SublimeLinter](https://packagecontrol.io/packages/SublimeLinter) or [Color Highlighter](https://packagecontrol.io/packages/Color%20Highlighter), the scheme file is extended and the written to a file in the `Packages/User` directory. If you switch between a lot of schemes this can quickly pollute the scheme list with many duplicates. Activate the base color scheme through Schemr and SublimeLinter/Color Highlighter will switch to their version automatically.
