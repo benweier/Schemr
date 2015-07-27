@@ -129,7 +129,7 @@ class Schemr(object):
 	def select_scheme(self, index, the_scheme_path, color_schemes, preferences):
 		if index is -1:
 			# Restore or erase the original scheme setting.
-			if (the_scheme_path is not False):
+			if (the_scheme_path is not ''):
 				self.set_scheme(the_scheme_path, preferences)
 				sublime.save_settings(preferences.get('filename'))
 			else:
@@ -211,7 +211,7 @@ class Schemr(object):
 		preferences.get('data').set('color_scheme', scheme)
 
 	def get_scheme(self, preferences):
-		return preferences.get('data').get('color_scheme', False)
+		return preferences.get('data').get('color_scheme', '')
 
 	def erase_scheme(self, preferences):
 		preferences.get('data').erase('color_scheme')
