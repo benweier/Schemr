@@ -138,7 +138,7 @@ class Schemr(object):
 			# Persist the new scheme setting.
 			self.set_scheme(color_schemes[index][1], preferences)
 			sublime.save_settings(preferences.get('filename'))
-			sublime.status_message('Scheme: ' + self.filter_scheme_name(color_schemes[index][1]))
+			sublime.status_message('Scheme: ' + color_schemes[index][0])
 
 		# Cycles the scheme in the given direction ("next", "prev" or "rand").
 	def cycle_schemes(self, schemes, direction):
@@ -164,7 +164,7 @@ class Schemr(object):
 
 		self.set_scheme(schemes[index][1], self.preferences)
 		sublime.save_settings(self.preferences.get('filename'))
-		sublime.status_message('Scheme: ' + self.filter_scheme_name(schemes[index][1]))
+		sublime.status_message('Scheme: ' + schemes[index][0])
 
 		# Parse the scheme file for the background color and return the RGB values
 		# in order to determine if the scheme is Dark or Light. Use load_resources()
@@ -250,7 +250,7 @@ class SchemrListSchemesCommand(sublime_plugin.WindowCommand):
 	# Only available if there are favorites to display.
 class SchemrListFavoriteSchemesCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		Schemr.instance().list_schemes(self.window, [scheme for scheme in Schemr.instance().load_schemes() if scheme[2]], Schemr.instance().favorites)
+		Schemr.instance().list_schemes(self.window, [scheme for scheme in Schemr.instance().load_schemes() if scheme[2]], Schemr.instance().preferences)
 
 	def is_enabled(self):
 		return len(Schemr.instance().get_favorites()) > 0
