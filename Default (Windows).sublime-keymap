@@ -1,11 +1,11 @@
 [
 	{ "keys": ["alt+f5"], "command": "schemr_list_schemes" },
-	{ "keys": ["alt+f7"], "command": "schemr_cycle_schemes", "args": {"direction": "next"}},
-	{ "keys": ["alt+f8"], "command": "schemr_cycle_schemes", "args": {"direction": "prev"}},
+	{ "keys": ["alt+f7"], "command": "schemr_cycle_schemes", "args": {"direction": "prev"}},
+	{ "keys": ["alt+f8"], "command": "schemr_cycle_schemes", "args": {"direction": "next"}},
 	{ "keys": ["alt+f10"], "command": "schemr_cycle_schemes", "args": {"direction": "rand"}},
 
 	{ "keys": ["shift+alt+f5"], "command": "schemr_list_favorite_schemes" },
-	{ "keys": ["shift+alt+f7"], "command": "schemr_cycle_favorite_schemes", "args": {"direction": "next"}},
-	{ "keys": ["shift+alt+f8"], "command": "schemr_cycle_favorite_schemes", "args": {"direction": "prev"}},
+	{ "keys": ["shift+alt+f7"], "command": "schemr_cycle_favorite_schemes", "args": {"direction": "prev"}},
+	{ "keys": ["shift+alt+f8"], "command": "schemr_cycle_favorite_schemes", "args": {"direction": "next"}},
 	{ "keys": ["shift+alt+f10"], "command": "schemr_cycle_favorite_schemes", "args": {"direction": "rand"}}
 ]
