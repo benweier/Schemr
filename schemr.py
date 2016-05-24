@@ -197,12 +197,12 @@ class Schemr(object):
 		if len(background_color) is 3:
 			# Shorthand value, e.g. #111
 			# Repeat the values for correct base 16 conversion.
-			r, g, b = background_color[:1] + background_color[:1], background_color[1:2] + background_color[1:2], background_color[2:] + background_color[2:]
+			r, g, b = [background_color[i:i+1] * 2 for i in range(0,3)]
 		else:
 			# Full-length color value, e.g. #111111 or #FFEEEEEE
 			# Here we assume the order of hex values is #AARRGGBB
-			# and so work backwards from the end of the string.
-			r, g, b = background_color[-6:-4], background_color[-4:-2], background_color[-2:]
+			# and so skip the first two chars
+			r, g, b = [background_color[i:i+2] for i in range(2, len(a), 2)]
 
 		r, g, b = [int(n, 16) for n in (r, g, b)]
 		return (r, g, b)
