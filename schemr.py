@@ -200,9 +200,9 @@ class Schemr(object):
 			r, g, b = [background_color[i:i+1] * 2 for i in range(0, 3)]
 		else:
 			# Full-length color value, e.g. #111111 or #FFEEEEEE
-			# Here we assume the order of hex values is #AARRGGBB
-			# and so skip the first two chars
-			r, g, b = [background_color[i:i+2] for i in range(2, len(background_color), 2)]
+			# Here we assume the order of hex values is #RRGGBB
+			# or #RRGGBBAA and only use six characters.
+			r, g, b = [background_color[i:i+2] for i in range(0, 6, 2)]
 
 		r, g, b = [int(n, 16) for n in (r, g, b)]
 		return (r, g, b)
