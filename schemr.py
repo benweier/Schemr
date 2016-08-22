@@ -97,11 +97,14 @@ class Schemr(object):
 			for scheme in schemes:
 				# Get the RGB value of the scheme background and convert to luminance value.
 				rgb = self.parse_scheme(scheme[1])
-				luminance = (0.2126 * rgb[0]) + (0.7152 * rgb[1]) + (0.0722 * rgb[2])
-				if luminance < schemr_brightness_theshold:
-					flag = '   [Dark]'
-				else:
-					flag = '   [Light]'
+				flag = ''
+
+				if rgb is not False:
+					luminance = (0.2126 * rgb[0]) + (0.7152 * rgb[1]) + (0.0722 * rgb[2])
+					if luminance < schemr_brightness_theshold:
+						flag = '   [Dark]'
+					else:
+						flag = '   [Light]'
 
 				color_schemes.append([scheme[0] + flag + scheme[2], scheme[1]])
 
@@ -175,24 +178,24 @@ class Schemr(object):
 				xml = sublime.load_resource(scheme_path)
 			except:
 				print('Error loading ' + scheme_path)
-				return (0, 0, 0)
+				return False
 			try:
 				plist = parser.parse_string(xml)
 			except (parser.PropertyListParseError):
 				print('Error parsing ' + scheme_path)
-				return (0, 0, 0)
+				return False
 		else:
 			xml = os.path.join(sublime.packages_path(), scheme_path.replace('Packages/', ''))
 			try:
 				plist = parser.parse_file(xml)
 			except (parser.PropertyListParseError):
 				print('Error parsing ' + scheme_path)
-				return (0, 0, 0)
+				return False
 
 		try:
 			background_color = plist['settings'][0]['settings']['background'].lstrip('#')
 		except (KeyError): # tmTheme is missing a background color
-			return (0, 0, 0)
+			return False
 
 		if len(background_color) is 3:
 			# Shorthand value, e.g. #111
@@ -204,7 +207,11 @@ class Schemr(object):
 			# or #RRGGBBAA and only use six characters.
 			r, g, b = [background_color[i:i+2] for i in range(0, 6, 2)]
 
-		r, g, b = [int(n, 16) for n in (r, g, b)]
+		try:
+			r, g, b = [int(n, 16) for n in (r, g, b)]
+		except (ValueError): # Error converting the hex value
+			return False
+
 		return (r, g, b)
 
 	def set_scheme(self, scheme, preferences):
