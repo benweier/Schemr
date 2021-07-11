@@ -15,10 +15,11 @@ else:
     sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
     import plist_parser as parser
 
-# Contains various common, internal functions for Schemr.
-
 
 class Schemr(object):
+    """
+    Contains various common, internal functions for Schemr.
+    """
     _instance = None
 
     @classmethod
@@ -51,17 +52,16 @@ class Schemr(object):
                 for package in (package for package in files if package.endswith('.sublime-package')):
                     zf = zipfile.ZipFile(os.path.join(sublime.installed_packages_path(), package))
                     for filename in (filename for filename in zf.namelist() if filename.endswith('.tmTheme')):
-                        filepath = os.path.join(root, package, filename).replace(sublime.installed_packages_path(),
-                                                                                 'Packages').replace('.sublime-package',
-                                                                                                     '').replace('\\',
-                                                                                                                 '/')
+                        filepath = os.path.join(root, package, filename).replace(
+                            sublime.installed_packages_path(),
+                            'Packages').replace('.sublime-package', '').replace('\\', '/')
                         scheme_paths.append(filepath)
 
             # Load the paths for schemes contained in folders.
             for root, dirs, files in os.walk(sublime.packages_path()):
                 for filename in (filename for filename in files if filename.endswith('.tmTheme')):
-                    filepath = os.path.join(root, filename).replace(sublime.packages_path(), 'Packages').replace('\\',
-                                                                                                                 '/')
+                    filepath = os.path.join(root, filename).replace(
+                        sublime.packages_path(), 'Packages').replace('\\', '/')
                     scheme_paths.append(filepath)
 
         scheme_paths = self.filter_scheme_list(scheme_paths)
@@ -165,7 +165,7 @@ class Schemr(object):
             sublime.save_settings(preferences.get('filename'))
             sublime.status_message('Scheme: ' + color_schemes[index][0])
 
-    def cycle_schemes(self, schemes, direction, filter=None, preferences=None):
+    def cycle_schemes(self, schemes, direction, view=None, filter=None, preferences=None):
         """
         Cycles the scheme in the given direction ("next", "prev" or "rand").
         """
@@ -195,16 +195,22 @@ class Schemr(object):
         if direction == 'rand':
             index = int(random() * len(permissible_schemes))
 
-        # set scheme for syntax, but let us still preview within this view
+        # set scheme for syntax
         self.set_scheme(permissible_schemes[index][1], preferences)
-        self.view.settings().erase("color_scheme")
+
+        # if a view is defined, reset the theme in the current view so we properly reset the preview.
+        # this is optional in order to possibly preserve ST2 compatibility
+        if view is not None:
+            view.settings().erase("color_scheme")
         sublime.save_settings(preferences.get('filename'))
         sublime.status_message('Scheme: ' + permissible_schemes[index][0])
 
-    # Parse the scheme file for the background color and return the RGB values
-    # in order to determine if the scheme is Dark or Light. Use load_resources()
-    # first for ST3 or fallback to the absolute path for ST2.
-    def parse_scheme(self, scheme_path):
+    @staticmethod
+    def parse_scheme(scheme_path):
+        """Parse the scheme file for the background color and return the RGB values
+        in order to determine if the scheme is Dark or Light. Use load_resources()
+        first for ST3 or fallback to the absolute path for ST2.
+        """
         if not is_ST2:
             try:
                 xml = sublime.load_resource(scheme_path)
@@ -213,23 +219,23 @@ class Schemr(object):
                 return False
             try:
                 plist = parser.parse_string(xml)
-            except (parser.PropertyListParseError):
+            except parser.PropertyListParseError:
                 print('Error parsing ' + scheme_path)
                 return False
         else:
             xml = os.path.join(sublime.packages_path(), scheme_path.replace('Packages/', ''))
             try:
                 plist = parser.parse_file(xml)
-            except (parser.PropertyListParseError):
+            except parser.PropertyListParseError:
                 print('Error parsing ' + scheme_path)
                 return False
 
         try:
             background_color = plist['settings'][0]['settings']['background'].lstrip('#')
-        except (KeyError):  # tmTheme is missing a background color
+        except KeyError:  # tmTheme is missing a background color
             return False
 
-        if len(background_color) is 3:
+        if len(background_color) == 3:
             # Shorthand value, e.g. #111
             # Repeat the values for correct base 16 conversion.
             r, g, b = [background_color[i:i + 1] * 2 for i in range(0, 3)]
@@ -354,7 +360,7 @@ class SchemrCycleSchemesCommand(sublime_plugin.WindowCommand):
     """
 
     def run(self, direction, filter=None):
-        Schemr.instance().cycle_schemes(Schemr.instance().load_schemes(), direction, filter=filter)
+        Schemr.instance().cycle_schemes(Schemr.instance().load_schemes(), direction, self.view, filter=filter)
 
 
 class SchemrCycleFavoriteSchemesCommand(sublime_plugin.WindowCommand):
@@ -364,6 +370,7 @@ class SchemrCycleFavoriteSchemesCommand(sublime_plugin.WindowCommand):
 
     def run(self, direction, filter=None):
         Schemr.instance().cycle_schemes([scheme for scheme in Schemr.instance().load_schemes() if scheme[2]], direction,
+                                        self.view,
                                         filter=filter)
 
     def is_enabled(self):
@@ -385,7 +392,8 @@ class SchemrCycleSyntaxSchemesCommand(sublime_plugin.TextCommand):
         syntax_file = os.path.splitext(os.path.basename(syntax_path))[0] + '.sublime-settings'
         preferences = dict(filename=syntax_file, data=sublime.load_settings(syntax_file))
 
-        Schemr.instance().cycle_schemes(Schemr.instance().load_schemes(), direction, filter=filter, preferences=preferences)
+        Schemr.instance().cycle_schemes(Schemr.instance().load_schemes(), direction,
+                                        self.view, filter=filter, preferences=preferences)
 
 
 class SchemrResetSyntaxSchemeCommand(sublime_plugin.TextCommand):
