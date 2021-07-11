@@ -33,10 +33,12 @@ class Schemr(object):
         self.favorites = dict(filename='SchemrFavorites.sublime-settings',
                               data=sublime.load_settings('SchemrFavorites.sublime-settings'))
 
-    # Returns a list of all managed schemes.  Each scheme is itself represented by a list
-    # that contains, in order, (1) its pretty-printed name, (2) its path and (3) whether
-    # or not it is favorited (True or False).
     def load_schemes(self):
+        """
+        Returns a list of all managed schemes.  Each scheme is itself represented by a list
+        that contains, in order, (1) its pretty-printed name, (2) its path and (3) whether
+        or not it is favorited (True or False).
+        """
         scheme_paths = []
         favorites = self.get_favorites()
 
@@ -76,13 +78,16 @@ class Schemr(object):
         schemes.sort(key=lambda s: s[0].lower())
         return schemes
 
-    # Displayes the given schemes in a quick-panel, letting the user cycle through
-    # them to preview them and possibly select one.  The reason that this is a method
-    # here instead of a free-standing command is that the "List all schemes" and
-    # "List favorite schemes" commands function exactly the same except for the
-    # underlying schemes that they operate on.  This method exists to provide that
-    # common listing functionality.
-    def list_schemes(self, window, schemes, preferences):
+    def list_schemes(self, window: sublime.Window, schemes, preferences):
+        """
+        Displays the given schemes in a quick-panel, letting the user cycle through
+        them to preview them and possibly select one.  The reason that this is a method
+        here instead of a free-standing command is that the "List all schemes" and
+        "List favorite schemes" commands function exactly the same except for the
+        underlying schemes that they operate on.  This method exists to provide that
+        common listing functionality.
+        """
+
         # Get the user-defined settings or return default values.
         schemr_brightness_theshold = self.preferences.get('data').get('schemr_brightness_theshold', 100)
         schemr_brightness_flags = self.preferences.get('data').get('schemr_brightness_flags', True)
@@ -95,7 +100,7 @@ class Schemr(object):
         # selection to that point and the best we can do is start from the top of the list.
         try:
             the_index = [scheme[0] for scheme in schemes].index(the_scheme_name)
-        except (ValueError):
+        except ValueError:
             the_index = 0
 
         # Build the display list of color schemes.
@@ -149,7 +154,7 @@ class Schemr(object):
     def select_scheme(self, index, the_scheme_path, color_schemes, preferences):
         if index is -1:
             # Restore or erase the original scheme setting.
-            if (the_scheme_path is not ''):
+            if the_scheme_path != '':
                 self.set_scheme(the_scheme_path, preferences)
                 sublime.save_settings(preferences.get('filename'))
             else:
@@ -160,8 +165,10 @@ class Schemr(object):
             sublime.save_settings(preferences.get('filename'))
             sublime.status_message('Scheme: ' + color_schemes[index][0])
 
-    # Cycles the scheme in the given direction ("next", "prev" or "rand").
     def cycle_schemes(self, schemes, direction, filter=None, preferences=None):
+        """
+        Cycles the scheme in the given direction ("next", "prev" or "rand").
+        """
         if preferences is None:
             preferences = self.preferences
         the_scheme_name = self.filter_scheme_name(self.get_scheme(preferences))
@@ -176,7 +183,7 @@ class Schemr(object):
         # saved an invalid scheme path or the current scheme file is not available.
         try:
             the_index = [scheme[0] for scheme in permissible_schemes].index(the_scheme_name)
-        except (ValueError):
+        except ValueError:
             the_index = 0
 
         if direction == 'next':
@@ -188,7 +195,9 @@ class Schemr(object):
         if direction == 'rand':
             index = int(random() * len(permissible_schemes))
 
+        # set scheme for syntax, but let us still preview within this view
         self.set_scheme(permissible_schemes[index][1], preferences)
+        self.view.settings().erase("color_scheme")
         sublime.save_settings(preferences.get('filename'))
         sublime.status_message('Scheme: ' + permissible_schemes[index][0])
 
@@ -232,18 +241,21 @@ class Schemr(object):
 
         try:
             r, g, b = [int(n, 16) for n in (r, g, b)]
-        except (ValueError):  # Error converting the hex value
+        except ValueError:  # Error converting the hex value
             return False
 
         return (r, g, b)
 
-    def set_scheme(self, scheme, preferences):
+    @staticmethod
+    def set_scheme(scheme, preferences):
         preferences.get('data').set('color_scheme', scheme)
 
-    def get_scheme(self, preferences):
+    @staticmethod
+    def get_scheme(preferences):
         return preferences.get('data').get('color_scheme', '')
 
-    def erase_scheme(self, preferences):
+    @staticmethod
+    def erase_scheme(preferences):
         preferences.get('data').erase('color_scheme')
 
     def set_favorites(self, schemes):
@@ -253,12 +265,14 @@ class Schemr(object):
     def get_favorites(self):
         return self.favorites.get('data').get('schemr_favorites')
 
-    def filter_scheme_name(self, scheme_path):
+    @staticmethod
+    def filter_scheme_name(scheme_path):
         regex = re.compile('(\ \(SL\))|(\ Color\ Highlighter)?.tmTheme', re.IGNORECASE)
         scheme_name = re.sub(regex, '', scheme_path).split('/').pop()
         return scheme_name
 
-    def filter_scheme_list(self, scheme_list):
+    @staticmethod
+    def filter_scheme_list(scheme_list):
         # Filter schemes generated by known plugins.
         regex = re.compile('SublimeLinter|Color\ Highlighter|Colorsublime - Themes\/cache', re.IGNORECASE)
         return [scheme for scheme in scheme_list if not regex.search(scheme)]
@@ -271,10 +285,11 @@ class Schemr(object):
         else:
             return False
 
-# Called when Sublime API is ready [ST3].
-
 
 def plugin_loaded():
+    """
+    Called when Sublime API is ready [ST3].
+    """
     Schemr.instance()
 
 
@@ -399,4 +414,5 @@ class SchemrRandomSchemeCommand(sublime_plugin.WindowCommand):
         self.window.run_command('schemr_cycle_schemes', {'direction': 'rand'})
 
 
-if is_ST2: plugin_loaded()
+if is_ST2:
+    plugin_loaded()
