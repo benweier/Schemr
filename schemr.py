@@ -293,17 +293,20 @@ def plugin_loaded():
     Schemr.instance()
 
 
-# Display the full list of schemes available, regardless
-# of whether or not they are favorited.
 class SchemrListSchemesCommand(sublime_plugin.WindowCommand):
+    """Display the full list of schemes available, regardless
+    of whether or not they are favorited.
+    """
+
     def run(self):
         Schemr.instance().list_schemes(self.window, Schemr.instance().load_schemes(), Schemr.instance().preferences)
 
-# Display the list of schemes that have been favorited.
-# Only available if there are favorites to display.
-
 
 class SchemrListFavoriteSchemesCommand(sublime_plugin.WindowCommand):
+    """Display the list of schemes that have been favorited.
+    Only available if there are favorites to display.
+    """
+
     def run(self):
         Schemr.instance().list_schemes(self.window,
                                        [scheme for scheme in Schemr.instance().load_schemes() if scheme[2]],
@@ -312,12 +315,11 @@ class SchemrListFavoriteSchemesCommand(sublime_plugin.WindowCommand):
     def is_enabled(self):
         return len(Schemr.instance().get_favorites()) > 0
 
-# SchemrFavoriteCurrentSchemeCommand and SchemrUnfavoriteCurrentSchemeCommand
-# work in conjunction. Only one is ever available to the user at a time,
-# depending on whether or not the active scheme is already favorited.
-
 
 class SchemrFavoriteCurrentSchemeCommand(sublime_plugin.WindowCommand):
+    """
+    Only available when SchemrUnfavoriteCurrentSchemeCommand isn't
+    """
     def run(self):
         the_scheme = Schemr.instance().find_scheme(Schemr.instance().get_scheme(Schemr.instance().preferences))
         if the_scheme is not False:
@@ -331,6 +333,9 @@ class SchemrFavoriteCurrentSchemeCommand(sublime_plugin.WindowCommand):
 
 
 class SchemrUnfavoriteCurrentSchemeCommand(sublime_plugin.WindowCommand):
+    """
+    Only available when SchemrFavoriteCurrentSchemeCommand isn't
+    """
     def run(self):
         the_scheme = Schemr.instance().find_scheme(Schemr.instance().get_scheme(Schemr.instance().preferences))
         if the_scheme is not False:
@@ -342,19 +347,21 @@ class SchemrUnfavoriteCurrentSchemeCommand(sublime_plugin.WindowCommand):
         return Schemr.instance().find_scheme(
             Schemr.instance().get_scheme(Schemr.instance().preferences)) in Schemr.instance().get_favorites()
 
-# Cycles the full list of schemes that are available
-# regardless of whether or not they are favorited.
-
 
 class SchemrCycleSchemesCommand(sublime_plugin.WindowCommand):
+    """Cycles the full list of schemes that are available
+    regardless of whether or not they are favorited.
+    """
+
     def run(self, direction, filter=None):
         Schemr.instance().cycle_schemes(Schemr.instance().load_schemes(), direction, filter=filter)
 
-# Cycles the list of schemes that have been favorited. This command is
-# only available if the number of favorites is enough to cycle through.
-
 
 class SchemrCycleFavoriteSchemesCommand(sublime_plugin.WindowCommand):
+    """Cycles the list of schemes that have been favorited. This command is
+    only available if the number of favorites is enough to cycle through.
+    """
+
     def run(self, direction, filter=None):
         Schemr.instance().cycle_schemes([scheme for scheme in Schemr.instance().load_schemes() if scheme[2]], direction,
                                         filter=filter)
