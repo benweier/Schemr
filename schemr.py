@@ -165,7 +165,7 @@ class Schemr(object):
             sublime.save_settings(preferences.get('filename'))
             sublime.status_message('Scheme: ' + color_schemes[index][0])
 
-    def cycle_schemes(self, schemes, direction, view=None, filter=None, preferences=None):
+    def cycle_schemes(self, schemes, direction, view: sublime.View = None, filter=None, preferences=None):
         """
         Cycles the scheme in the given direction ("next", "prev" or "rand").
         """
@@ -326,6 +326,7 @@ class SchemrFavoriteCurrentSchemeCommand(sublime_plugin.WindowCommand):
     """
     Only available when SchemrUnfavoriteCurrentSchemeCommand isn't
     """
+
     def run(self):
         the_scheme = Schemr.instance().find_scheme(Schemr.instance().get_scheme(Schemr.instance().preferences))
         if the_scheme is not False:
@@ -342,6 +343,7 @@ class SchemrUnfavoriteCurrentSchemeCommand(sublime_plugin.WindowCommand):
     """
     Only available when SchemrFavoriteCurrentSchemeCommand isn't
     """
+
     def run(self):
         the_scheme = Schemr.instance().find_scheme(Schemr.instance().get_scheme(Schemr.instance().preferences))
         if the_scheme is not False:
@@ -409,6 +411,7 @@ class SchemrResetSyntaxSchemeCommand(sublime_plugin.TextCommand):
         syntax_file = os.path.splitext(os.path.basename(syntax_path))[0] + '.sublime-settings'
 
         return sublime.load_settings(syntax_file).has('color_scheme')
+
 
 # These commands are provided for backwards-compatibility.
 # SchemrCycleSchemeCommand should be used instead.
