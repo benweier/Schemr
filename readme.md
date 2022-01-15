@@ -16,6 +16,7 @@ Install Schemr through [Package Control](https://packagecontrol.io/), or downloa
 
 # Contributors
 * [Max](https://github.com/SyntaxColoring) - Favorites support and code refactoring
+* [River](https://github.com/RheingoldRiver) - Cycle themes for current syntax via keymap
 
 # Usage
 
@@ -64,6 +65,21 @@ Syntax specific color schemes will override the behavior of all other commands f
 **Schemr: Set scheme for current syntax** displays the scheme selection list to choose a color scheme for the syntax mode of the current file.
 
 **Schemr: Reset scheme for current syntax** removes the color scheme setting for the syntax mode of the current file. Only available if a syntax specific color scheme has been set.
+
+**schemer\_cycle\_syntax\_schemes** is available for use as a keyboard shortcut. You can specify a direction and a filter (suggested filters are `Light` or `Dark`, but any string from theme names is allowed).
+
+Example keymap that you could copy to your `sublime-keymap` file (however no defaults are provided):
+
+```json
+	{
+		"keys": ["ctrl+k", "ctrl+o"], "command": "schemr_cycle_syntax_schemes",
+		"args": { "direction": "next", "filter": "Dark" }
+	},
+	{
+		"keys": ["ctrl+k", "ctrl+p"], "command": "schemr_cycle_syntax_schemes",
+		"args": { "direction": "prev", "filter": "Dark" }
+	},
+```
 
 # User Settings
 These settings are available to control some of Schemr's behavior. Add them to `Preferences.sublime-settings` if you wish to override the default value.
